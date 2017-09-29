@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Embeddable;
-import javax.persistence.Entity;
 
 import lombok.AccessLevel;
 import lombok.Data;

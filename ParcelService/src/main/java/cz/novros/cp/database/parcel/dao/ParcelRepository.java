@@ -2,13 +2,16 @@ package cz.novros.cp.database.parcel.dao;
 
 import java.util.Collection;
 
-import org.springframework.data.repository.CrudRepository;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import lombok.NonNull;
+import org.springframework.data.repository.CrudRepository;
 
 import cz.novros.cp.database.parcel.entity.Parcel;
 
+
 public interface ParcelRepository extends CrudRepository<Parcel, String> {
 
-	Collection<Parcel> findByParcelTrackingNumberIn(@NonNull final Collection<String> parcelTracingNumbers);
+	@Nullable
+	Collection<Parcel> findByParcelTrackingNumberIn(@Nonnull final Collection<String> parcelTracingNumbers);
 }

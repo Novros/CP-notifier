@@ -1,0 +1,4 @@
+rootProject.name = 'parcelService'
+
+include ':jmsShared'
+project(':jmsShared').projectDir = new File("../Jms")

@@ -1,9 +1,11 @@
 package cz.novros.cp.database.parcel;
 
+import javax.annotation.Nonnull;
 import javax.jms.ConnectionFactory;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -27,7 +29,7 @@ public class Application {
 	}
 
 	@Bean
-	public JmsListenerContainerFactory<?> myFactory(ConnectionFactory connectionFactory, DefaultJmsListenerContainerFactoryConfigurer configurer) {
+	public JmsListenerContainerFactory<?> myFactory(@Nonnull final ConnectionFactory connectionFactory, DefaultJmsListenerContainerFactoryConfigurer configurer) {
 		DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
 		factory.setErrorHandler(t -> log.error("An error has occurred in the message!", t));
 		configurer.configure(factory, connectionFactory);

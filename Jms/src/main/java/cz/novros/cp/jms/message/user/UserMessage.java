@@ -4,10 +4,12 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import cz.novros.cp.jms.message.AbstractJmsMessage;
+
 @Data
 @FieldDefaults(level = AccessLevel.PACKAGE)
-public abstract class UserMessage {
-	
+public class UserMessage extends AbstractJmsMessage {
+
 	String username;
 	String password;
 }

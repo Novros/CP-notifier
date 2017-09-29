@@ -1,122 +1,131 @@
 package cz.novros.cp.database.user.jms;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
 import lombok.AccessLevel;
-import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 
 import cz.novros.cp.database.user.entity.User;
 import cz.novros.cp.database.user.service.UserService;
+import cz.novros.cp.jms.QueueNames;
+import cz.novros.cp.jms.message.AbstractJmsMessage;
+import cz.novros.cp.jms.message.parcel.TrackingNumbersMessage;
+import cz.novros.cp.jms.message.reponse.BooleanResponseMessage;
+import cz.novros.cp.jms.message.user.AddTrackingNumbersMessage;
+import cz.novros.cp.jms.message.user.LoginUserMessage;
+import cz.novros.cp.jms.message.user.ReadTrackingNumbersMessage;
+import cz.novros.cp.jms.message.user.RegisterUserMessage;
+import cz.novros.cp.jms.service.AbstractJmsService;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class JmsService {
-
-	private static final String DATABASE_USER_QUEUE = "database-user";
-	private static final String SENDER_QUEUE = "sender";
-
-	private static final String ACTION_IDENTIFIER = "action";
-	private static final String REGISTER_USER_ACTION = "register";
-	private static final String LOGIN_USER_ACTION = "login";
-	private static final String ADD_TRACKING_ACTION = "tracking";
-
-	private static final String USERNAME_KEY = "username";
-	private static final String PASSWORD_KEY = "password";
-	private static final String TRACKING_KEY = "tracking";
-
-	private static final String TRACKING_NUMBER_DELIMITER = ";";
+public class JmsService extends AbstractJmsService {
 
 	private static final Logger log = LoggerFactory.getLogger(JmsService.class);
 
 	UserService userService;
-	JmsTemplate jmsTemplate;
 
-	public JmsService(@NonNull final UserService userService, final JmsTemplate jmsTemplate) {
+	@Autowired
+	public JmsService(@Nonnull final UserService userService, final JmsTemplate jmsTemplate) {
+		super(jmsTemplate);
 		this.userService = userService;
-		this.jmsTemplate = jmsTemplate;
 	}
 
-	@JmsListener(destination = DATABASE_USER_QUEUE, containerFactory = "myFactory")
-	public void receiveMessage(@NonNull final Map<String, String> message) {
-		switch (message.get(ACTION_IDENTIFIER)) {
-			case REGISTER_USER_ACTION:
-				registerUser(message);
-				break;
-			case LOGIN_USER_ACTION:
-				loginUser(message);
-				break;
-			case ADD_TRACKING_ACTION:
-				addTrackingNumbers(message);
-				break;
-			default:
-				log.warn("No action was defined!");
-				break;
+	@JmsListener(destination = QueueNames.DATABASE_USER_QUEUE, containerFactory = "myFactory")
+	public void receiveMessage(@Nonnull final AbstractJmsMessage message) {
+		if (message instanceof RegisterUserMessage) {
+			registerUser((RegisterUserMessage) message);
+		} else if (message instanceof LoginUserMessage) {
+			loginUser((LoginUserMessage) message);
+		} else if (message instanceof AddTrackingNumbersMessage) {
+			addTrackingNumbers((AddTrackingNumbersMessage) message);
+		} else if (message instanceof ReadTrackingNumbersMessage) {
+			readTrackingNumbers((ReadTrackingNumbersMessage) message);
+		} else {
+			log.warn("Did not found any appropriate method for message: {}", message);
 		}
 	}
 
-	private void registerUser(@NonNull final Map<String, String> message) {
-		final String email = message.get(USERNAME_KEY);
+	private void registerUser(@Nonnull final RegisterUserMessage message) {
+		final String email = message.getUsername();
 		log.debug("Creating user with email: {}", email);
 
-		final User user = userService.createUser(email, message.get(PASSWORD_KEY));
+		final User user = userService.createUser(email, message.getPassword());
+
+		final BooleanResponseMessage responseMessage = new BooleanResponseMessage();
 		if (user == null) {
 			log.error("User({}) was not created!", email);
-			sendResponse(message, false);
+			responseMessage.setOk(false);
+			responseMessage.setError(false);
 		} else {
 			log.info("User with email[{}] was created.", email);
-			sendResponse(message, true);
+			responseMessage.setOk(true);
 		}
+
+		sendResponse(message, responseMessage);
 	}
 
-	private void loginUser(@NonNull final Map<String, String> message) {
-		final String email = message.get(USERNAME_KEY);
+	private void loginUser(@Nonnull final LoginUserMessage message) {
+		final String email = message.getUsername();
 		log.debug("Trying to login user({}).", email);
 
-		final User user = userService.loginUser(email, message.get(PASSWORD_KEY));
+		final User user = userService.loginUser(email, message.getPassword());
 
+		final BooleanResponseMessage responseMessage = new BooleanResponseMessage();
 		if (user == null) {
 			log.error("User({}) was not logged in!", email);
-			sendResponse(message, false);
+			responseMessage.setOk(false);
+			responseMessage.setError(false);
 		} else {
 			log.debug("User({}) was successfully logged.", email);
-			sendResponse(message, true);
+			responseMessage.setOk(true);
 		}
+
+		sendResponse(message, responseMessage);
 	}
 
-	private void addTrackingNumbers(@NonNull final Map<String, String> message) {
-		final String email = message.get(USERNAME_KEY);
+	private void addTrackingNumbers(@Nonnull final AddTrackingNumbersMessage message) {
+		final String email = message.getUsername();
 		log.debug("Adding tracking numbers to user({}).", email);
 
-		final Set<String> trackingNumbers = new HashSet<>();
-		trackingNumbers.addAll(Arrays.asList(message.get(TRACKING_KEY).split(TRACKING_NUMBER_DELIMITER)));
+		final Set<String> trackingNumbers = new HashSet<>(message.getTrackingNumbers().size());
+		trackingNumbers.addAll(message.getTrackingNumbers());
 
 		final User user = userService.addTrackingNumbers(email, trackingNumbers);
 
+		final BooleanResponseMessage responseMessage = new BooleanResponseMessage();
 		if (user == null) {
 			log.error("Could not add tracking numbers to user({})!", email);
-			sendResponse(message, false);
+			responseMessage.setOk(false);
+			responseMessage.setError(false);
 		} else {
 			log.info("Tracking numbers (count={}) to user({}) where added!", trackingNumbers.size(), email);
-			sendResponse(message, true);
+			responseMessage.setOk(true);
 		}
+
+		sendResponse(message, responseMessage);
 	}
 
-	private void sendResponse(@NonNull final Map<String, String> requestMessage, @NonNull final Object response) {
-		jmsTemplate.convertAndSend(requestMessage.get(SENDER_QUEUE),
-				response,
-				message -> {
-					message.setJMSCorrelationID(requestMessage.get(USERNAME_KEY));
-					return message;
-				});
+	private void readTrackingNumbers(@Nonnull final ReadTrackingNumbersMessage message) {
+		final String email = message.getUsername();
+		log.debug("Reading tracking numbers for user({}).", email);
+
+		final Set<String> numbers = userService.readTrackingNumbers(email);
+		final TrackingNumbersMessage trackingNumbersMessage = new TrackingNumbersMessage();
+		trackingNumbersMessage.setTrackingNumbers(numbers);
+
+		log.info("Tracking numbers (count={}) for user({}) where read!", numbers.size(), email);
+
+		sendResponse(message, trackingNumbersMessage);
 	}
 }

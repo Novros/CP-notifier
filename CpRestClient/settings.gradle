@@ -1,0 +1,4 @@
+rootProject.name = 'CpRestClient'
+
+include ':jmsShared'
+project(':jmsShared').projectDir = new File("../Jms")

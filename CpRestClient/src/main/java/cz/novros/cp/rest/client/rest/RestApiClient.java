@@ -6,12 +6,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.AccessLevel;
-import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 
 import cz.novros.cp.rest.client.entity.Parcel;
@@ -27,11 +28,12 @@ public class RestApiClient {
 	RestTemplate restTemplate;
 
 	@Autowired
-	public RestApiClient(@NonNull final RestTemplate restTemplate) {
+	public RestApiClient(@Nonnull final RestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
 	}
 
-	public Collection<Parcel> getParcelHistory(@NonNull final Collection<String> parcelIds) {
+	@Nonnull
+	public Collection<Parcel> getParcelHistory(@Nonnull final Collection<String> parcelIds) {
 		final Collection<Parcel> parcelHistories = new HashSet<>();
 
 		partitionCollection(parcelIds, MAXIMAL_COUNT_OF_PARCELS)
@@ -40,12 +42,14 @@ public class RestApiClient {
 		return parcelHistories;
 	}
 
-	private Parcel[] getParcelHistoryForTen(@NonNull final Collection<String> parcelIds) {
+	@Nonnull
+	private Parcel[] getParcelHistoryForTen(@Nonnull final Collection<String> parcelIds) {
 		return restTemplate.getForObject(
 				PARCEL_HISTORY_PATH + parcelIds.stream().collect(Collectors.joining(JOINER))
 				, Parcel[].class);
 	}
 
+	@Nonnull
 	private <T> Collection<Collection<T>> partitionCollection(final Collection<T> collection, final int size) {
 		final Collection<Collection<T>> returnList = new ArrayList<>();
 		final Collection<T> tenList = new HashSet<>(size);

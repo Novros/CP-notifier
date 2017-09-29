@@ -2,6 +2,8 @@
 .gradle
 build/
 out/
+*.db
+*.iml
 
 # Compiled class file
 *.class

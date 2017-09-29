@@ -1,4 +1,4 @@
-group 'cz.novros.cp.rest'
+group 'cz.novros.cp.database.parcel'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
@@ -19,18 +19,22 @@ buildscript {
 
 repositories {
     mavenCentral()
+    maven { url "https://repository.jboss.org/nexus/content/repositories/releases" }
+}
+
+springBoot {
+    mainClass = "cz.novros.cp.database.parcel.Application"
 }
 
 jar {
-    baseName = 'cp-rest-cp'
+    baseName = 'cp-parcel_service'
     version = '1.0.0'
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter")
-    compile("org.springframework:spring-web")
-    compile("com.fasterxml.jackson.core:jackson-databind")
-    compile('org.apache.httpcomponents:httpclient')
+    // Databse
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile("com.h2database:h2")
 
     // MQ
     compile("org.springframework.boot:spring-boot-starter-activemq")

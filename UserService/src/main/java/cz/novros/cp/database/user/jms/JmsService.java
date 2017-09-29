@@ -65,7 +65,6 @@ public class JmsService {
 	}
 
 	private void registerUser(@NonNull final Map<String, String> message) {
-		final String sender = message.get(SENDER_QUEUE);
 		final String email = message.get(USERNAME_KEY);
 		log.debug("Creating user with email: {}", email);
 

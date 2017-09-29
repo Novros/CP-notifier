@@ -27,7 +27,7 @@ springBoot {
 }
 
 jar {
-    baseName = 'cp-database'
+    baseName = 'cp-user_service'
     version = '1.0.0'
 }
 

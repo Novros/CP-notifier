@@ -1,0 +1,24 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<div th:fragment="parcel">
+    <div class="panel panel-primary">
+        <div class="panel-heading" th:text="${parcel.parcelTrackingNumber}">Parcel tracking
+        </div>
+        <ul class="list-group">
+            <li class="list-group-item"><b>Info </b><span th:text="${parcel.attributes.displayBasicInfo()}"></span></li>
+            <li class="list-group-item"><b>Country </b><span th:text="${parcel.attributes.displayCountry()}"></span></li>
+            <li class="list-group-item"><b>Phone </b><span th:text="${parcel.attributes.displayPhone()}"></span></li>
+            <li class="list-group-item"><b>Delivery </b><span th:text="${parcel.attributes.displayDelivery()}"></span>
+            </li>
+            <li class="list-group-item"><b>Stored </b><span th:text="${parcel.attributes.displayStored()}"></span></li>
+        </ul>
+        <div class="panel-body">
+            <div></div>
+            <div th:each="state : ${parcel.states}" th:include="fragments/state :: state"/>
+        </div>
+    </div>
+</div>
+</body>
+</html>

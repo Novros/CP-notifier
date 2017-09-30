@@ -1,12 +1,6 @@
 package cz.novros.cp.web;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,10 +11,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
+
+import cz.novros.cp.jms.CommonConstants;
+import cz.novros.cp.jms.QueueNames;
+import cz.novros.cp.jms.message.reponse.BooleanResponseMessage;
+import cz.novros.cp.jms.message.user.RegisterUserMessage;
 
 @ComponentScan
 @SpringBootApplication
@@ -33,27 +31,17 @@ public class Application {
 	@Bean
 	public CommandLineRunner demo(JmsTemplate jmsTemplate) {
 		return (args) -> {
-//			// Send a message with a POJO - the template reuse the message converter
-//			System.out.println("Sending an email message.");
-//			final MessageCreator messageCreator = new MessageCreator() {
-//				@Override
-//				public Message createMessage(final Session session) throws JMSException {
-//					return session.createObjectMessage(new UserMessage("info@example.com", "password"));
-//				}
-//			};
-//			final Message message = jmsTemplate.sendAndReceive("database-user", messageCreator);
-//			System.out.println("Message recieved: " + message);
-
 			final String email = "test@test.cz";
-			final Map<String, String> message = new HashMap<>();
-			message.put("action", "register");
-			message.put("username", email);
-			message.put("password", "password");
-			message.put("sender", "web-service");
+
+			final RegisterUserMessage message = new RegisterUserMessage();
+			message.setUsername(email);
+			message.setPassword("password");
+			message.setSenderQueue(QueueNames.WEB_QUEUE);
+			message.setMessageId(email);
 
 			System.out.println("Sending an user message.");
-			jmsTemplate.convertAndSend("database-user", message);
-			final Boolean response = (Boolean) jmsTemplate.receiveSelectedAndConvert("web-service", "JMSCorrelationID='" + email + "'");
+			jmsTemplate.convertAndSend(QueueNames.DATABASE_USER_QUEUE, message);
+			final BooleanResponseMessage response = (BooleanResponseMessage) jmsTemplate.receiveSelectedAndConvert(QueueNames.WEB_QUEUE, CommonConstants.getResponseSelector(email));
 			System.out.println(response);
 		};
 	}

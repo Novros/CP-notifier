@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Spring Boot Thymeleaf + Spring Security</title>
+    <div th:replace="fragments/header :: header-css"/>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+<div class="container">
+
+    <div class="starter-template">
+        <h1>Tracked numbers</h1>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <ul class="list-group">
+                    <li class="list-group-item" th:each="tracking : ${trackingNumbers}"
+                        th:include="fragments/tracking :: tracking"/>
+                </ul>
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="trackingNumber" class="sr-only">Tracking number</label>
+                        <input type="text" class="form-control" id="trackingNumber" name="trackingNumber"/>
+                    </div>
+                    <button type="submit" class="btn btn-info bt-sm">Add</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>

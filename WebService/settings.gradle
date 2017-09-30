@@ -1,0 +1,4 @@
+rootProject.name = 'WebService'
+
+include ':jmsShared'
+project(':jmsShared').projectDir = new File("../Jms")

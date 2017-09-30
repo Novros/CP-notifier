@@ -1,0 +1,14 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<div th:fragment="quick-parcel">
+    <div class="panel panel-info">
+        <div class="panel-heading" th:text="${parcel.parcelTrackingNumber}">Parcel tracking</div>
+        <div class="panel-body">
+            <div th:with="state=${parcel.getLastState()}" th:replace="fragments/state :: state"/>
+        </div>
+    </div>
+</div>
+</body>
+</html>

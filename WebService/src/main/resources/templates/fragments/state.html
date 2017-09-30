@@ -1,0 +1,23 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<div th:fragment="state">
+    <div class="panel panel-info">
+        <div class="panel-heading" th:text="${state.displayTitle()}">State date + state text</div>
+        <div class="panel-body">
+            <ul class="list-group">
+                <li class="list-group-item"><b>Place: </b><span
+                        th:text="${state.displayPostOffice()}">Post office</span>
+                </li>
+                <li class="list-group-item"><b>Gps: </b><span
+                        th:text="${state.displayGps()}">latitude and longitude</span>
+                </li>
+                <li class="list-group-item"><b>Delivery attempt: </b><span th:text="${state.timeDeliveryAttempt}">delivery attemp</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -35,9 +35,21 @@ public interface UserService {
 	 * @param username        Username of user.
 	 * @param trackingNumbers Tracking numbers which will be added.
 	 *
-	 * @return True if tracking numbers were added, otherwise false.
+	 * @return Return actualized tracking numbers of user.
 	 */
-	boolean addTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers);
+	@Nonnull
+	Collection<String> addTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers);
+
+	/**
+	 * Remove tracking numbers from user.
+	 *
+	 * @param username        Username of user.
+	 * @param trackingNumbers Tracking numbers which will be added.
+	 *
+	 * @return Return actualized tracking numbers of user.
+	 */
+	@Nonnull
+	Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers);
 
 	/**
 	 * Read all tracking number of user.

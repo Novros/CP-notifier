@@ -17,10 +17,10 @@
                     <li class="list-group-item" th:each="tracking : ${trackingNumbers}"
                         th:include="fragments/tracking :: tracking"/>
                 </ul>
-                <form class="form-inline">
+                <form class="form-inline" method="post" th:action="@{/add-tracking}" th:object="${formTrackingNumbers}">
                     <div class="form-group">
-                        <label for="trackingNumber" class="sr-only">Tracking number</label>
-                        <input type="text" class="form-control" id="trackingNumber" name="trackingNumber"/>
+                        <label class="sr-only" for="numbers">Tracking numbers (';' use as delimiter)</label>
+                        <input type="text" class="form-control" th:field="*{trackingNumbers}" id="numbers"/>
                     </div>
                     <button type="submit" class="btn btn-info bt-sm">Add</button>
                 </form>

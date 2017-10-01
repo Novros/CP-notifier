@@ -3,7 +3,7 @@
 </head>
 <body>
 <div th:fragment="state">
-    <div class="panel panel-info">
+    <div th:if="${state != null}" class="panel panel-info">
         <div class="panel-heading" th:text="${state.displayTitle()}">State date + state text</div>
         <div class="panel-body">
             <ul class="list-group">

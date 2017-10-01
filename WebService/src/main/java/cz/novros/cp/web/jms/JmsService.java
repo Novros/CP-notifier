@@ -71,7 +71,7 @@ public class JmsService extends AbstractJmsService implements ParcelService, Use
 		return booleanResponseMessage.isOk();
 	}
 
-	public boolean addTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
+	public Collection<String> addTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
 		log.debug("Adding tracking numbers to user({}).", username);
 
 		final AddTrackingNumbersMessage message = new AddTrackingNumbersMessage();
@@ -83,7 +83,13 @@ public class JmsService extends AbstractJmsService implements ParcelService, Use
 
 		log.debug("Tracking numbers to user({}) were " + (booleanResponseMessage.isOk() ? "not " : "") + "added.");
 
-		return booleanResponseMessage.isOk();
+		return ImmutableList.of();
+	}
+
+	@Nonnull
+	@Override
+	public Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
+		return null;
 	}
 
 	@Override

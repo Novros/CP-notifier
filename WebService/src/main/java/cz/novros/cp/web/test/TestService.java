@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -27,6 +28,10 @@ import cz.novros.cp.web.service.UserService;
 @Scope("singleton")
 @Primary
 public class TestService implements UserService, ParcelService {
+
+	private static final Collection<String> serviceTrackingNumbers = new HashSet<String>() {{
+		addAll(ImmutableList.of("123456789", "987654321", "123498765"));
+	}};
 
 	@Nonnull
 	@Override
@@ -62,14 +67,24 @@ public class TestService implements UserService, ParcelService {
 		return true;
 	}
 
+	@Nonnull
 	@Override
-	public boolean addTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
-		return true;
+	public Collection<String> addTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
+		serviceTrackingNumbers.addAll(trackingNumbers);
+		return serviceTrackingNumbers;
 	}
+
+	@Nonnull
+	@Override
+	public Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
+		serviceTrackingNumbers.removeAll(trackingNumbers);
+		return serviceTrackingNumbers;
+	}
+
 
 	@Override
 	public Collection<String> readTrackingNumbers(@Nonnull final String username) {
-		return ImmutableList.of("123456789", "987654321", "123498765");
+		return serviceTrackingNumbers;
 	}
 
 	private Parcel createParcel(@Nonnull final String trackingNumber) {

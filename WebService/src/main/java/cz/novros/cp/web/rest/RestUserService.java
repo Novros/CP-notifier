@@ -21,10 +21,18 @@ public class RestUserService implements UserService {
 		return false;
 	}
 
+	@Nonnull
 	@Override
-	public boolean addTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
-		return false;
+	public Collection<String> addTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
+		return null;
 	}
+
+	@Nonnull
+	@Override
+	public Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
+		return null;
+	}
+
 
 	@Override
 	public Collection<String> readTrackingNumbers(@Nonnull final String username) {

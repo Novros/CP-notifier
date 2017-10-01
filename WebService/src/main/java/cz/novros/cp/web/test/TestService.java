@@ -14,7 +14,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,7 @@ import cz.novros.cp.web.service.UserService;
 
 @Service
 @Scope("singleton")
-@Primary
+@Profile("test")
 public class TestService implements UserService, ParcelService {
 
 	private static final Collection<String> serviceTrackingNumbers = new HashSet<String>() {{

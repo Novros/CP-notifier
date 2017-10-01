@@ -7,6 +7,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -83,10 +86,8 @@ public class DefaultController {
 	}
 
 	private String getLoggedUsername() {
-		// TODO Fixme
-//		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//		final User user = (User) auth.getPrincipal();
-//		return user.getUsername();
-		return "A";
+		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		final User user = (User) auth.getPrincipal();
+		return user.getUsername();
 	}
 }

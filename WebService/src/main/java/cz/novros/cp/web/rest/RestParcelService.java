@@ -4,12 +4,16 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import cz.novros.cp.jms.entity.Parcel;
 import cz.novros.cp.web.service.ParcelService;
 
 @Service
+@Profile("rest")
+@Primary
 public class RestParcelService implements ParcelService {
 
 	@Nonnull

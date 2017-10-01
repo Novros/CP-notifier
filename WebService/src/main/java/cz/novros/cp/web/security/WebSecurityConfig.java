@@ -16,30 +16,24 @@ import lombok.experimental.FieldDefaults;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	CpAuthenticationProvider authProvider;
-	CustomAccessDeniedHandler accessDeniedHandler;
 
 	@Autowired
-	public WebSecurityConfig(final CpAuthenticationProvider authProvider, final CustomAccessDeniedHandler accessDeniedHandler) {
+	public WebSecurityConfig(final CpAuthenticationProvider authProvider) {
 		this.authProvider = authProvider;
-		this.accessDeniedHandler = accessDeniedHandler;
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		// FIXME
-		http.csrf().disable();
-//				.authorizeRequests()
-//				.antMatchers("/", "/home", "/about", "/tracking", "/add-tracking").permitAll()
-//				.anyRequest().authenticated()
-//				.and()
-//				.formLogin()
-//				.loginPage("/login")
-//				.permitAll()
-//				.and()
-//				.logout()
-//				.permitAll()
-//				.and()
-//				.exceptionHandling().accessDeniedHandler(accessDeniedHandler);
+		http
+				.authorizeRequests()
+				.anyRequest().authenticated()
+				.and()
+				.formLogin()
+				.loginPage("/login")
+				.permitAll()
+				.and()
+				.logout()
+				.permitAll();
 	}
 
 	@Override

@@ -4,13 +4,17 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import cz.novros.cp.web.service.UserService;
 
 @Service
+@Profile("rest")
+@Primary
 public class RestUserService implements UserService {
-	
+
 	@Override
 	public boolean registerUser(@Nonnull final String username, @Nonnull final String password) {
 		return false;

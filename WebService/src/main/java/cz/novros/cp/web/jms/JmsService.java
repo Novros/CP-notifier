@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.ImmutableList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import cz.novros.cp.jms.CommonConstants;
 import cz.novros.cp.jms.QueueNames;
-import cz.novros.cp.jms.entity.Attributes;
 import cz.novros.cp.jms.entity.Parcel;
-import cz.novros.cp.jms.entity.State;
 import cz.novros.cp.jms.message.AbstractJmsMessage;
 import cz.novros.cp.jms.message.parcel.ParcelsMessage;
 import cz.novros.cp.jms.message.parcel.ReadParcelsMessage;
@@ -33,6 +32,7 @@ import cz.novros.cp.web.service.ParcelService;
 import cz.novros.cp.web.service.UserService;
 
 @Service
+@Profile("jms")
 @Slf4j
 public class JmsService extends AbstractJmsService implements ParcelService, UserService {
 
@@ -71,6 +71,7 @@ public class JmsService extends AbstractJmsService implements ParcelService, Use
 		return booleanResponseMessage.isOk();
 	}
 
+	@Nonnull
 	public Collection<String> addTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
 		log.debug("Adding tracking numbers to user({}).", username);
 
@@ -89,6 +90,7 @@ public class JmsService extends AbstractJmsService implements ParcelService, Use
 	@Nonnull
 	@Override
 	public Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
+		// TODO Implement
 		return null;
 	}
 
@@ -111,40 +113,27 @@ public class JmsService extends AbstractJmsService implements ParcelService, Use
 		return trackingNumbersMessage.getTrackingNumbers();
 	}
 
-	public Collection<Parcel> readParcelsForUser(@Nonnull final String username) {
-		log.debug("Reading all parcels for user({}).", username);
+	@Nonnull
+	@Override
+	public Collection<Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers) {
+		log.debug("Reading parcels for tracking numbers({}).", trackingNumbers);
 
-		final Collection<String> trackingNumbers = readAllTrackingNumbers(username);
 		final ReadParcelsMessage readParcelsMessage = new ReadParcelsMessage();
-		fillBasicInfo(readParcelsMessage, username);
+		fillBasicInfo(readParcelsMessage, "tracking");
 		readParcelsMessage.setTrackingNumbers(trackingNumbers);
 
 		jmsTemplate.convertAndSend(QueueNames.DATABASE_PARCEL_QUEUE, readParcelsMessage);
-//		final ParcelsMessage parcelsMessage = (ParcelsMessage) jmsTemplate.receiveSelectedAndConvert(readParcelsMessage.getSenderQueue(), readParcelsMessage.getMessageId());
-		// TODO remove
-		final ParcelsMessage parcelsMessage = new ParcelsMessage();
-		final Parcel parcel = new Parcel();
-		parcel.setParcelTrackingNumber("1234567890");
-		parcel.setAttributes(new Attributes());
-		final State state = new State();
-		state.setText("Text of state is this");
-		parcel.setStates(ImmutableList.of(state));
-		parcelsMessage.setParcels(ImmutableList.of(parcel));
+		final ParcelsMessage parcelsMessage = (ParcelsMessage) jmsTemplate.receiveSelectedAndConvert(readParcelsMessage.getSenderQueue(), readParcelsMessage.getMessageId());
 
-		log.debug("Parcels(size={}) for user({}) were read.", parcelsMessage.getParcels().size(), username);
+		log.debug("Parcels(size={}) for tracking numbers({}) were read.", parcelsMessage.getParcels().size(), trackingNumbers);
 
 		return parcelsMessage.getParcels();
 	}
 
 	@Nonnull
 	@Override
-	public Collection<Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers) {
-		return null;
-	}
-
-	@Nonnull
-	@Override
 	public Collection<Parcel> refreshParcels(@Nonnull final Collection<String> trackingNumbers) {
+		// TODO Call Rest CP client
 		return null;
 	}
 

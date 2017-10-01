@@ -15,8 +15,7 @@
             <li class="list-group-item"><b>Stored </b><span th:text="${parcel.attributes.displayStored()}"></span></li>
         </ul>
         <div class="panel-body">
-            <div></div>
-            <div th:each="state : ${parcel.states}" th:include="fragments/state :: state"/>
+            <div th:each="state : ${parcel.states}" th:include="fragments/state :: state-div"/>
         </div>
     </div>
 </div>

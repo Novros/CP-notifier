@@ -6,7 +6,13 @@
     <div class="panel panel-info">
         <div class="panel-heading" th:text="${parcel.parcelTrackingNumber}">Parcel tracking</div>
         <div class="panel-body">
-            <div th:with="state=${parcel.getLastState()}" th:replace="fragments/state :: state"/>
+            <div th:if="${parcel.getLastState() == null}">
+                <div class="font-italic">No information available.</div>
+            </div>
+            <div th:unless="${parcel.getLastState() == null}">
+                <div th:with="state=${parcel.getLastState()}" th:include="fragments/state :: state-div">
+                </div>
+            </div>
         </div>
     </div>
 </div>

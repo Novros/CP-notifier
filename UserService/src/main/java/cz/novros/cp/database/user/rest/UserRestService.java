@@ -35,7 +35,7 @@ public class UserRestService extends AbstractRestService implements UserService 
 
 	@Nonnull
 	@Override
-	@RequestMapping(value = "/{username}/add-tracking", method = RequestMethod.POST)
+	@RequestMapping(value = EndpointNames.ADD_TRACKING_USER_ENDPOINT, method = RequestMethod.POST)
 	public Collection<String> addTrackingNumbers(@PathVariable @Nonnull final String username, @RequestBody @Nonnull final Collection<String> trackingNumbers) {
 		log.info("Adding tracking numbers(count={}) to user({}).", trackingNumbers.size(), username);
 
@@ -48,7 +48,7 @@ public class UserRestService extends AbstractRestService implements UserService 
 
 	@Nonnull
 	@Override
-	@RequestMapping(value = "/{username}/remove-tracking", method = RequestMethod.POST)
+	@RequestMapping(value = EndpointNames.REMOVE_TRACKING_USER_ENDPOINT, method = RequestMethod.POST)
 	public Collection<String> removeTrackingNumbers(@PathVariable @Nonnull final String username, @RequestBody @Nonnull final Collection<String> trackingNumbers) {
 		log.info("Removing tracking numbers(count={}) to user({}).", trackingNumbers.size(), username);
 
@@ -60,7 +60,7 @@ public class UserRestService extends AbstractRestService implements UserService 
 	}
 
 	@Override
-	@RequestMapping(value = "/{username}/tracking", method = RequestMethod.GET)
+	@RequestMapping(value = EndpointNames.READ_TRACKING_USER_ENDPOINT, method = RequestMethod.GET)
 	public Collection<String> readTrackingNumbers(@PathVariable @Nonnull final String username) {
 		log.info("Reading tracking numbers to user({}).", username);
 

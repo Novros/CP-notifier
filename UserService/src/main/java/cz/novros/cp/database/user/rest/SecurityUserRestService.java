@@ -31,7 +31,7 @@ public class SecurityUserRestService implements SecurityUserService {
 
 	UserSecurityService userSecurityService;
 
-	@RequestMapping(value = "/register", method = RequestMethod.POST)
+	@RequestMapping(value = EndpointNames.REGISTER_USER_ENDPOINT, method = RequestMethod.POST)
 	@Override
 	public boolean registerUser(@RequestBody @Nonnull final User user) {
 		final String username = user.getUsername();
@@ -48,7 +48,7 @@ public class SecurityUserRestService implements SecurityUserService {
 		return result;
 	}
 
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	@RequestMapping(value = EndpointNames.LOGIN_USER_ENDPOINT, method = RequestMethod.POST)
 	@Override
 	public boolean loginUser(@RequestBody @Nonnull final User user) {
 		final String username = user.getUsername();

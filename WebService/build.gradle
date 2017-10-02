@@ -19,7 +19,6 @@ buildscript {
     }
 }
 
-
 task buildDocker(type: Docker, dependsOn: build) {
     applicationName = jar.baseName
     dockerfile = file('Dockerfile')
@@ -34,10 +33,6 @@ task buildDocker(type: Docker, dependsOn: build) {
 repositories {
     mavenCentral()
     maven { url "https://repository.jboss.org/nexus/content/repositories/releases" }
-}
-
-springBoot {
-    mainClass = "cz.novros.cp.web.Application"
 }
 
 jar {

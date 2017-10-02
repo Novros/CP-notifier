@@ -9,27 +9,26 @@ import javax.annotation.Nullable;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import cz.novros.cp.database.parcel.dao.ParcelRepository;
 import cz.novros.cp.database.parcel.entity.Parcel;
+import cz.novros.cp.database.parcel.jms.EntityConverter;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class ParcelService {
+@AllArgsConstructor(onConstructor = @__(@Autowired))
+public class ParcelService implements cz.novros.cp.common.service.ParcelService {
 
 	ParcelRepository parcelRepository;
-
-	@Autowired
-	public ParcelService(@Nonnull final ParcelRepository parcelRepository) {
-		this.parcelRepository = parcelRepository;
-	}
 
 	@Nonnull
 	public Collection<String> readAllTrackingNumbers() {
@@ -48,13 +47,24 @@ public class ParcelService {
 	}
 
 	@Nonnull
-	public Collection<Parcel> findByTrackingNumber(@Nonnull final Collection<String> trackingNumber) {
-		final Collection<Parcel> parcels = parcelRepository.findByParcelTrackingNumberIn(trackingNumber);
-		return parcels == null ? ImmutableList.of() : parcels;
+	@Override
+	public Collection<cz.novros.cp.common.entity.Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers) {
+		final Collection<Parcel> databaseParcels = parcelRepository.findByParcelTrackingNumberIn(trackingNumbers);
+		return databaseParcels == null ? ImmutableList.of() : EntityConverter.convertParcelToCommon(databaseParcels);
 	}
 
-	@Nullable
-	public Iterable<Parcel> saveParcels(@Nonnull final Iterable<Parcel> parcels) {
-		return parcelRepository.save(parcels);
+	@Nonnull
+	@Override
+	public Collection<cz.novros.cp.common.entity.Parcel> saveParcels(@Nonnull final Collection<cz.novros.cp.common.entity.Parcel> parcels) {
+		Iterable<Parcel> databaseParcels = EntityConverter.convertParcelFromCommon(parcels);
+		databaseParcels = parcelRepository.save(databaseParcels);
+		return databaseParcels == null ? ImmutableSet.of() : EntityConverter.convertParcelToCommon(databaseParcels);
+	}
+
+	@Override
+	public void removeParcels(@Nonnull final Collection<String> trackingNumbers) {
+		for (final String tracking : trackingNumbers) {
+			parcelRepository.delete(tracking);
+		}
 	}
 }

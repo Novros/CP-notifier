@@ -32,9 +32,12 @@ jar {
 }
 
 dependencies {
-    // Databse
+    // Database
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
     compile("com.h2database:h2")
+
+    // Rest
+    compile("org.springframework.boot:spring-boot-starter-web")
 
     // MQ
     compile("org.springframework.boot:spring-boot-starter-activemq")
@@ -45,5 +48,8 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '23.0'
     compileOnly('org.projectlombok:lombok')
 
-    compile project(':jmsShared')
+    // Own modules
+    compile project(':common')
+    compile project(':jms')
+    compile project(':rest')
 }

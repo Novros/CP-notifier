@@ -16,37 +16,37 @@ import cz.novros.cp.database.parcel.entity.State;
 @UtilityClass
 public class EntityConverter {
 
-	public static Collection<Parcel> convertParcelFromJms(@Nonnull final Collection<cz.novros.cp.jms.entity.Parcel> jmsParcels) {
+	public static Collection<Parcel> convertParcelFromCommon(@Nonnull final Iterable<cz.novros.cp.common.entity.Parcel> jmsParcels) {
 		final Collection<Parcel> myParcels = new HashSet<>();
 
-		for (final cz.novros.cp.jms.entity.Parcel parcel : jmsParcels) {
-			myParcels.add(convertParcelFromJms(parcel));
+		for (final cz.novros.cp.common.entity.Parcel parcel : jmsParcels) {
+			myParcels.add(convertParcelFromCommon(parcel));
 		}
 
 		return myParcels;
 	}
 
-	private static Parcel convertParcelFromJms(@Nonnull final cz.novros.cp.jms.entity.Parcel jmsParcel) {
+	private static Parcel convertParcelFromCommon(@Nonnull final cz.novros.cp.common.entity.Parcel jmsParcel) {
 		final Parcel myParcel = new Parcel();
 
 		myParcel.setParcelTrackingNumber(jmsParcel.getParcelTrackingNumber());
-		myParcel.setAttributes(convertAttributesFromJms(jmsParcel.getAttributes()));
-		myParcel.setStates(convertStatesFromJms(jmsParcel.getStates()));
+		myParcel.setAttributes(convertAttributesFromCommon(jmsParcel.getAttributes()));
+		myParcel.setStates(convertStatesFromCommon(jmsParcel.getStates()));
 
 		return myParcel;
 	}
 
-	private static List<State> convertStatesFromJms(@Nonnull final Collection<cz.novros.cp.jms.entity.State> jmsStates) {
+	private static List<State> convertStatesFromCommon(@Nonnull final Collection<cz.novros.cp.common.entity.State> jmsStates) {
 		final List<State> myStates = new ArrayList<>();
 
-		for (final cz.novros.cp.jms.entity.State state : jmsStates) {
-			myStates.add(convertStateFromJms(state));
+		for (final cz.novros.cp.common.entity.State state : jmsStates) {
+			myStates.add(convertStateFromCommon(state));
 		}
 
 		return myStates;
 	}
 
-	private static State convertStateFromJms(@Nonnull final cz.novros.cp.jms.entity.State jmsState) {
+	private static State convertStateFromCommon(@Nonnull final cz.novros.cp.common.entity.State jmsState) {
 		final State myState = new State();
 
 		myState.setDate(jmsState.getDate());
@@ -60,7 +60,7 @@ public class EntityConverter {
 		return myState;
 	}
 
-	private static Attributes convertAttributesFromJms(@Nonnull final cz.novros.cp.jms.entity.Attributes jmsAttributes) {
+	private static Attributes convertAttributesFromCommon(@Nonnull final cz.novros.cp.common.entity.Attributes jmsAttributes) {
 		final Attributes myAttributes = new Attributes();
 
 		myAttributes.setCashOnDelivery(jmsAttributes.getCashOnDelivery());
@@ -82,38 +82,38 @@ public class EntityConverter {
 		return myAttributes;
 	}
 
-	public static Collection<cz.novros.cp.jms.entity.Parcel> convertParcelToJms(@Nonnull final Collection<Parcel> parcels) {
-		final Collection<cz.novros.cp.jms.entity.Parcel> myParcels = new HashSet<>();
+	public static Collection<cz.novros.cp.common.entity.Parcel> convertParcelToCommon(@Nonnull final Iterable<Parcel> parcels) {
+		final Collection<cz.novros.cp.common.entity.Parcel> myParcels = new HashSet<>();
 
 		for (final Parcel parcel : parcels) {
-			myParcels.add(convertParcelToJms(parcel));
+			myParcels.add(convertParcelToCommon(parcel));
 		}
 
 		return myParcels;
 	}
 
-	private static cz.novros.cp.jms.entity.Parcel convertParcelToJms(@Nonnull final Parcel parcel) {
-		final cz.novros.cp.jms.entity.Parcel jmsParcel = new cz.novros.cp.jms.entity.Parcel();
+	private static cz.novros.cp.common.entity.Parcel convertParcelToCommon(@Nonnull final Parcel parcel) {
+		final cz.novros.cp.common.entity.Parcel jmsParcel = new cz.novros.cp.common.entity.Parcel();
 
 		jmsParcel.setParcelTrackingNumber(parcel.getParcelTrackingNumber());
-		jmsParcel.setAttributes(convertAttributesToJms(parcel.getAttributes()));
-		jmsParcel.setStates(convertStatesToJms(parcel.getStates()));
+		jmsParcel.setAttributes(convertAttributesToCommon(parcel.getAttributes()));
+		jmsParcel.setStates(convertStatesToCommon(parcel.getStates()));
 
 		return jmsParcel;
 	}
 
-	private static List<cz.novros.cp.jms.entity.State> convertStatesToJms(@Nonnull final Collection<State> states) {
-		final List<cz.novros.cp.jms.entity.State> jmsStates = new ArrayList<>();
+	private static List<cz.novros.cp.common.entity.State> convertStatesToCommon(@Nonnull final Collection<State> states) {
+		final List<cz.novros.cp.common.entity.State> jmsStates = new ArrayList<>();
 
 		for (final State state : states) {
-			jmsStates.add(convertStateToJms(state));
+			jmsStates.add(convertStateToCommon(state));
 		}
 
 		return jmsStates;
 	}
 
-	private static cz.novros.cp.jms.entity.State convertStateToJms(@Nonnull final State state) {
-		final cz.novros.cp.jms.entity.State jmsState = new cz.novros.cp.jms.entity.State();
+	private static cz.novros.cp.common.entity.State convertStateToCommon(@Nonnull final State state) {
+		final cz.novros.cp.common.entity.State jmsState = new cz.novros.cp.common.entity.State();
 
 		jmsState.setDate(state.getDate());
 		jmsState.setLatitude(state.getLatitude());
@@ -126,8 +126,8 @@ public class EntityConverter {
 		return jmsState;
 	}
 
-	private static cz.novros.cp.jms.entity.Attributes convertAttributesToJms(@Nonnull final Attributes attributes) {
-		final cz.novros.cp.jms.entity.Attributes jmsAttributes = new cz.novros.cp.jms.entity.Attributes();
+	private static cz.novros.cp.common.entity.Attributes convertAttributesToCommon(@Nonnull final Attributes attributes) {
+		final cz.novros.cp.common.entity.Attributes jmsAttributes = new cz.novros.cp.common.entity.Attributes();
 
 		jmsAttributes.setCashOnDelivery(attributes.getCashOnDelivery());
 		jmsAttributes.setCurrency(attributes.getCurrency());

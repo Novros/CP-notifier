@@ -21,17 +21,17 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
-import cz.novros.cp.web.service.UserService;
+import cz.novros.cp.common.service.SecurityUserService;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class CpAuthenticationProvider implements AuthenticationProvider {
 
-	UserService userService;
+	SecurityUserService userService;
 
 	@Autowired
-	public CpAuthenticationProvider(@Nonnull final UserService userService) {
+	public CpAuthenticationProvider(@Nonnull final SecurityUserService userService) {
 		this.userService = userService;
 	}
 

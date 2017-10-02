@@ -20,14 +20,4 @@ public interface ParcelService {
 	 */
 	@Nonnull
 	Collection<Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers);
-
-	/**
-	 * Refresh parcels by tracking number.
-	 *
-	 * @param trackingNumbers Tracking number for which will be parcel updated.
-	 *
-	 * @return Updated parcels given by tracking numbers.
-	 */
-	@Nonnull
-	Collection<Parcel> refreshParcels(@Nonnull final Collection<String> trackingNumbers);
 }

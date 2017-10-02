@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
-import cz.novros.cp.jms.CommonConstants;
-import cz.novros.cp.jms.entity.Parcel;
-import cz.novros.cp.web.service.ParcelService;
-import cz.novros.cp.web.service.UserService;
-import cz.novros.cp.web.view.entity.FormTrackingNumbers;
+import cz.novros.cp.common.CommonConstants;
+import cz.novros.cp.common.entity.Parcel;
+import cz.novros.cp.common.service.ParcelService;
+import cz.novros.cp.common.service.UserService;
+import cz.novros.cp.web.view.entity.TrackingNumbersForm;
 
 @Controller
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -51,7 +51,7 @@ public class DefaultController {
 	}
 
 	@PostMapping("/add-tracking")
-	public String addTrackingNumbers(@ModelAttribute @Nullable final FormTrackingNumbers trackingNumbers, @Nonnull final Model model) {
+	public String addTrackingNumbers(@ModelAttribute @Nullable final TrackingNumbersForm trackingNumbers, @Nonnull final Model model) {
 		if (trackingNumbers != null && !trackingNumbers.getTrackingNumbersCollection().isEmpty()) {
 			return displayTrackingNumbers(model, userService.addTrackingNumbers(getLoggedUsername(), trackingNumbers.getTrackingNumbersCollection()));
 		} else {
@@ -76,7 +76,7 @@ public class DefaultController {
 
 	private String displayTrackingNumbers(@Nonnull final Model model, @Nullable final Collection<String> trackingNumbers) {
 		model.addAttribute("trackingNumbers", trackingNumbers == null ? userService.readTrackingNumbers(getLoggedUsername()) : trackingNumbers);
-		model.addAttribute("formTrackingNumbers", new FormTrackingNumbers());
+		model.addAttribute("formTrackingNumbers", new TrackingNumbersForm());
 		return "tracking_numbers";
 	}
 

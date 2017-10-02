@@ -8,22 +8,16 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import cz.novros.cp.web.service.UserService;
+import lombok.extern.slf4j.Slf4j;
+
+import cz.novros.cp.common.service.UserService;
+import cz.novros.cp.rest.service.AbstractRestClient;
 
 @Service
 @Profile("rest")
 @Primary
-public class RestUserService implements UserService {
-
-	@Override
-	public boolean registerUser(@Nonnull final String username, @Nonnull final String password) {
-		return false;
-	}
-
-	@Override
-	public boolean loginUser(@Nonnull final String username, @Nonnull final String password) {
-		return false;
-	}
+@Slf4j
+public class UserRestService extends AbstractRestClient implements UserService {
 
 	@Nonnull
 	@Override

@@ -44,7 +44,11 @@ public class Application {
 	@Bean
 	public CommandLineRunner run(@NonNull final JmsService service) throws Exception {
 		return args -> {
-			service.listenMessageFromJms(new UpdateParcelsMessage());
+			for (final String arg : args) {
+				if (arg.equals("update")) {
+					service.listenMessageFromJms(new UpdateParcelsMessage());
+				}
+			}
 		};
 	}
 

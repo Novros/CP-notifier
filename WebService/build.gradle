@@ -60,5 +60,7 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '23.0'
     compileOnly('org.projectlombok:lombok')
 
+    compile project(':common')
     compile project(':jmsShared')
+    compile project(':restShared')
 }

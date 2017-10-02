@@ -18,16 +18,17 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import cz.novros.cp.jms.entity.Attributes;
-import cz.novros.cp.jms.entity.Parcel;
-import cz.novros.cp.jms.entity.State;
-import cz.novros.cp.web.service.ParcelService;
-import cz.novros.cp.web.service.UserService;
+import cz.novros.cp.common.entity.Attributes;
+import cz.novros.cp.common.entity.Parcel;
+import cz.novros.cp.common.entity.State;
+import cz.novros.cp.common.service.ParcelService;
+import cz.novros.cp.common.service.SecurityUserService;
+import cz.novros.cp.common.service.UserService;
 
 @Service
 @Scope("singleton")
 @Profile("test")
-public class TestService implements UserService, ParcelService {
+public class TestService implements UserService, ParcelService, SecurityUserService {
 
 	private static final Collection<String> serviceTrackingNumbers = new HashSet<String>() {{
 		addAll(ImmutableList.of("123456789", "987654321", "123498765"));
@@ -36,18 +37,6 @@ public class TestService implements UserService, ParcelService {
 	@Nonnull
 	@Override
 	public Collection<Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers) {
-		return Collections2.transform(readTrackingNumbers("a"), new Function<String, Parcel>() {
-			@Nullable
-			@Override
-			public Parcel apply(@Nullable final String input) {
-				return createParcel(input);
-			}
-		});
-	}
-
-	@Nonnull
-	@Override
-	public Collection<Parcel> refreshParcels(@Nonnull final Collection<String> trackingNumbers) {
 		return Collections2.transform(readTrackingNumbers("a"), new Function<String, Parcel>() {
 			@Nullable
 			@Override

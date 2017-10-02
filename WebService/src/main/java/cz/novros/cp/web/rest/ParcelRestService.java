@@ -8,23 +8,21 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import cz.novros.cp.jms.entity.Parcel;
-import cz.novros.cp.web.service.ParcelService;
+import lombok.extern.slf4j.Slf4j;
+
+import cz.novros.cp.common.entity.Parcel;
+import cz.novros.cp.common.service.ParcelService;
+import cz.novros.cp.rest.service.AbstractRestClient;
 
 @Service
 @Profile("rest")
 @Primary
-public class RestParcelService implements ParcelService {
+@Slf4j
+public class ParcelRestService extends AbstractRestClient implements ParcelService {
 
 	@Nonnull
 	@Override
 	public Collection<Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers) {
-		return null;
-	}
-
-	@Nonnull
-	@Override
-	public Collection<Parcel> refreshParcels(@Nonnull final Collection<String> trackingNumbers) {
 		return null;
 	}
 }

@@ -2,3 +2,9 @@ rootProject.name = 'WebService'
 
 include ':jmsShared'
 project(':jmsShared').projectDir = new File("../Jms")
+
+include ':restShared'
+project(':restShared').projectDir = new File("../Rest")
+
+include ':common'
+project(':common').projectDir = new File("../Common")

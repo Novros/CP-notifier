@@ -18,9 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 import cz.novros.cp.common.entity.User;
 import cz.novros.cp.common.service.SecurityUserService;
 import cz.novros.cp.database.user.service.UserSecurityService;
+import cz.novros.cp.rest.EndpointNames;
 
 @RestController
-@RequestMapping("/security")
+@RequestMapping(EndpointNames.SECURITY_SERVICE_ENDPOINT)
 @Primary
 @Profile("rest")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)

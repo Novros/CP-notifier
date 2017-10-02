@@ -1,6 +1,6 @@
 FROM openjdk:8-jdk-alpine
 
-ADD build/libs/cp-user_service-1.0.0.jar app.jar
+ADD out/cp-user_service-1.0.0.jar app.jar
 VOLUME /tmp
 
 EXPOSE 8080

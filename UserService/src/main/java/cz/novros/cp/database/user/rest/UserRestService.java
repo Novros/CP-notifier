@@ -3,7 +3,6 @@ package cz.novros.cp.database.user.rest;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
-import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -20,10 +19,11 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
 import cz.novros.cp.common.service.UserService;
+import cz.novros.cp.rest.EndpointNames;
 import cz.novros.cp.rest.service.AbstractRestService;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping(EndpointNames.USER_SERVICE_ENDPOINT)
 @Primary
 @Profile("rest")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)

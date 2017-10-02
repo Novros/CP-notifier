@@ -29,11 +29,23 @@ public class SecurityRestService extends AbstractRestClient implements SecurityU
 
 	@Override
 	public boolean registerUser(@Nonnull final User user) {
-		return restTemplate.postForObject(getUrl(EndpointNames.REGISTER_USER_ENDPOINT), user, Boolean.class);
+		log.info("Trying to register user with username({}).", user.getUsername());
+
+		final boolean result = restTemplate.postForObject(getUrl(EndpointNames.REGISTER_USER_ENDPOINT), user, Boolean.class);
+
+		log.info("User with username({}) was {} registered.", user.getUsername(), result ? "" : "not");
+
+		return result;
 	}
 
 	@Override
 	public boolean loginUser(@Nonnull final User user) {
-		return restTemplate.postForObject(getUrl(EndpointNames.LOGIN_USER_ENDPOINT), user, Boolean.class);
+		log.debug("Trying to login user with username({}).", user.getUsername());
+
+		final boolean result = restTemplate.postForObject(getUrl(EndpointNames.LOGIN_USER_ENDPOINT), user, Boolean.class);
+
+		log.info("User with username({}) was {} logged in.", user.getUsername(), result ? "" : "not");
+
+		return result;
 	}
 }

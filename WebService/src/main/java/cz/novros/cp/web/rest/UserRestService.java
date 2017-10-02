@@ -34,17 +34,32 @@ public class UserRestService extends AbstractRestClient implements UserService {
 	@Nonnull
 	@Override
 	public Collection<String> addTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
-		return Arrays.asList(restTemplate.postForObject(getUrl(EndpointNames.ADD_TRACKING_USER_ENDPOINT), trackingNumbers, String[].class, ImmutableMap.of(EndpointNames.USERNAME_PARAM, username)));
+		log.info("Adding tracking numbers({}) to user({}).", username, trackingNumbers);
+
+		final Collection<String> numbers = Arrays.asList(restTemplate.postForObject(getUrl(EndpointNames.ADD_TRACKING_USER_ENDPOINT), trackingNumbers, String[].class, ImmutableMap.of(EndpointNames.USERNAME_PARAM, username)));
+		log.info("Tracking numbers({}) of user({}) were updated.", numbers, username);
+
+		return numbers;
 	}
 
 	@Nonnull
 	@Override
 	public Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
-		return Arrays.asList(restTemplate.postForObject(getUrl(EndpointNames.REMOVE_TRACKING_USER_ENDPOINT), trackingNumbers, String[].class, ImmutableMap.of(EndpointNames.USERNAME_PARAM, username)));
+		log.info("Remove tracking numbers({}) to user({}).", username, trackingNumbers);
+
+		final Collection<String> numbers = Arrays.asList(restTemplate.postForObject(getUrl(EndpointNames.REMOVE_TRACKING_USER_ENDPOINT), trackingNumbers, String[].class, ImmutableMap.of(EndpointNames.USERNAME_PARAM, username)));
+		log.info("Tracking numbers({}) of user({}) were updated.", numbers, username);
+
+		return numbers;
 	}
 
 	@Override
 	public Collection<String> readTrackingNumbers(@Nonnull final String username) {
-		return Arrays.asList(restTemplate.getForObject(getUrl(EndpointNames.READ_TRACKING_USER_ENDPOINT), String[].class, ImmutableMap.of(EndpointNames.USERNAME_PARAM, username)));
+		log.debug("Reading tracking numbers of user({}).", username);
+
+		final Collection<String> numbers = Arrays.asList(restTemplate.getForObject(getUrl(EndpointNames.READ_TRACKING_USER_ENDPOINT), String[].class, ImmutableMap.of(EndpointNames.USERNAME_PARAM, username)));
+		log.info("Tracking numbers({}) of user({}) were read.", numbers, username);
+
+		return numbers;
 	}
 }

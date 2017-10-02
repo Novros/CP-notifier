@@ -16,7 +16,7 @@ public interface CzechPostService {
 	 *
 	 * @param trackingNumbers Collections of tracking numbers, which will be read from rest api.
 	 *
-	 * @return Colleciton of read parcels, it might not have some parcels, because they not exists.
+	 * @return Collection of read parcels, it might not have some parcels, because they not exists.
 	 */
 	Collection<Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers);
 }

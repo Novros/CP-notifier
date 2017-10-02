@@ -36,28 +36,40 @@ public class ParcelRestService extends AbstractRestClient implements ParcelServi
 	@Nonnull
 	@Override
 	public Collection<Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers) {
+		log.debug("Reading parcels with tracking numbers({}).", trackingNumbers);
+
 		if (trackingNumbers.isEmpty()) {
 			return ImmutableList.of();
 		}
 
-		return Arrays.asList(restTemplate.getForObject(getUrl(EndpointNames.READ_PARCELS_ENDPOINT) + "?numbers={numbers}", Parcel[].class,
-				ImmutableMap.of("numbers", trackingNumbers)));
+		final Parcel[] parcels = restTemplate.getForObject(getUrl(EndpointNames.READ_PARCELS_ENDPOINT) + "?numbers={numbers}", Parcel[].class, ImmutableMap.of("numbers", trackingNumbers));
+		log.info("Parcels({}) with tracking numbers({}) were read.", parcels.length, trackingNumbers);
+
+		return Arrays.asList(parcels);
 	}
 
 	@Nonnull
 	@Override
 	public Collection<Parcel> saveParcels(@Nonnull final Collection<Parcel> parcels) {
+		log.debug("Saving parcels({}) to database.", parcels.size());
+
 		if (parcels.isEmpty()) {
 			return ImmutableList.of();
 		}
 
-		return Arrays.asList(restTemplate.postForObject(getUrl(EndpointNames.SAVE_PARCELS_ENDPOINT), parcels, Parcel[].class));
+		final Parcel[] updatedParcels = restTemplate.postForObject(getUrl(EndpointNames.SAVE_PARCELS_ENDPOINT), parcels, Parcel[].class);
+		log.info("Parcels({}) were saved.", updatedParcels.length);
+
+		return Arrays.asList(updatedParcels);
 	}
 
 	@Override
 	public void removeParcels(@Nonnull final Collection<String> trackingNumbers) {
+		log.debug("Removing parcels with tracking numbers({}) from database.", trackingNumbers);
+
 		if (!trackingNumbers.isEmpty()) {
-			restTemplate.delete(getUrl(EndpointNames.REMOVE_PARCELS_ENDPOINT), trackingNumbers); // FIXME
+			restTemplate.delete(getUrl(EndpointNames.REMOVE_PARCELS_ENDPOINT), trackingNumbers);
+			log.info("Parcels with tracking numbers({}) were removed.", trackingNumbers);
 		}
 	}
 }

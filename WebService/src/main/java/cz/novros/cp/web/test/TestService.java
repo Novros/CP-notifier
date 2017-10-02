@@ -22,6 +22,7 @@ import cz.novros.cp.common.entity.Attributes;
 import cz.novros.cp.common.entity.Parcel;
 import cz.novros.cp.common.entity.State;
 import cz.novros.cp.common.entity.User;
+import cz.novros.cp.common.service.ApplicationService;
 import cz.novros.cp.common.service.ParcelService;
 import cz.novros.cp.common.service.SecurityUserService;
 import cz.novros.cp.common.service.UserService;
@@ -29,7 +30,7 @@ import cz.novros.cp.common.service.UserService;
 @Service
 @Scope("singleton")
 @Profile("test")
-public class TestService implements UserService, ParcelService, SecurityUserService {
+public class TestService implements UserService, ParcelService, SecurityUserService, ApplicationService {
 
 	private static final Collection<String> serviceTrackingNumbers = new HashSet<String>() {{
 		addAll(ImmutableList.of("123456789", "987654321", "123498765"));
@@ -124,5 +125,10 @@ public class TestService implements UserService, ParcelService, SecurityUserServ
 	@Override
 	public boolean loginUser(@Nonnull final User user) {
 		return true;
+	}
+
+	@Override
+	public Collection<Parcel> refreshParcels(@Nonnull final Collection<String> trackingNumbers) {
+		return readParcels(trackingNumbers);
 	}
 }

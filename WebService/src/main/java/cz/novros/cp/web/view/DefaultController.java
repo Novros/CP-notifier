@@ -22,6 +22,7 @@ import lombok.experimental.FieldDefaults;
 
 import cz.novros.cp.common.CommonConstants;
 import cz.novros.cp.common.entity.Parcel;
+import cz.novros.cp.common.service.ApplicationService;
 import cz.novros.cp.common.service.ParcelService;
 import cz.novros.cp.common.service.UserService;
 import cz.novros.cp.web.view.entity.TrackingNumbersForm;
@@ -32,16 +33,18 @@ public class DefaultController {
 
 	UserService userService;
 	ParcelService parcelService;
+	ApplicationService applicationService;
 
 	@Autowired
-	public DefaultController(@Nonnull final UserService userService, @Nonnull final ParcelService parcelService) {
+	public DefaultController(@Nonnull final UserService userService, @Nonnull final ParcelService parcelService, @Nonnull final ApplicationService applicationService) {
 		this.userService = userService;
 		this.parcelService = parcelService;
+		this.applicationService = applicationService;
 	}
 
 	@GetMapping(value = {"/", "/home"})
 	public String home(final Model model) {
-		model.addAttribute("parcels", readParcelsForUser());
+		model.addAttribute("parcels", getParcelsOfCurrentUser());
 		return "home";
 	}
 
@@ -70,19 +73,33 @@ public class DefaultController {
 
 	@GetMapping("/tracked-parcels")
 	public String tracking(@Nonnull final Model model) {
-		model.addAttribute("parcels", readParcelsForUser());
+		return displayTrackedParcels(model, null);
+	}
+
+	@GetMapping("/refresh-parcels")
+	public String refresh(@Nonnull final Model model) {
+		return displayTrackedParcels(model, applicationService.refreshParcels(getTrackingNumbersOfCurrentUser()));
+	}
+
+	private String displayTrackedParcels(@Nonnull final Model model, @Nullable final Collection<Parcel> parcels) {
+		model.addAttribute("trackingNumbers", parcels == null ? getParcelsOfCurrentUser() :
+				parcels);
 		return "tracked_parcels";
 	}
 
 	private String displayTrackingNumbers(@Nonnull final Model model, @Nullable final Collection<String> trackingNumbers) {
-		model.addAttribute("trackingNumbers", trackingNumbers == null ? userService.readTrackingNumbers(getLoggedUsername()) : trackingNumbers);
+		model.addAttribute("trackingNumbers", trackingNumbers == null ? getTrackingNumbersOfCurrentUser() :
+				trackingNumbers);
 		model.addAttribute("formTrackingNumbers", new TrackingNumbersForm());
 		return "tracking_numbers";
 	}
 
-	private Collection<Parcel> readParcelsForUser() {
-		final Collection<String> trackingNumbers = userService.readTrackingNumbers(getLoggedUsername());
-		return parcelService.readParcels(trackingNumbers);
+	private Collection<String> getTrackingNumbersOfCurrentUser() {
+		return userService.readTrackingNumbers(getLoggedUsername());
+	}
+
+	private Collection<Parcel> getParcelsOfCurrentUser() {
+		return parcelService.readParcels(getTrackingNumbersOfCurrentUser());
 	}
 
 	private String getLoggedUsername() {

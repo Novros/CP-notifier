@@ -20,6 +20,9 @@ public class EndpointNames {
 	public static final String REGISTER_USER_ENDPOINT = "/register";
 	public static final String LOGIN_USER_ENDPOINT = "/login";
 	
+	public static final String APPLICATION_SERVICE_ENDPOINT = "/application";
+	public static final String REFERSH_PARCEL_ENDPOINT = "/refresh";
+	
 	public static final String CP_SERVICE_ENDPOINT = "/cp";
 	
 	

@@ -23,7 +23,5 @@ public class EndpointNames {
 	public static final String APPLICATION_SERVICE_ENDPOINT = "/application";
 	public static final String REFERSH_PARCEL_ENDPOINT = "/refresh";
 	
-	public static final String CP_SERVICE_ENDPOINT = "/cp";
-	
-	
+	public static final String CZECH_POST_SERVICE = "/cp";
 }

@@ -1,4 +1,4 @@
-package cz.novros.cp.rest.client.jms;
+package cz.novros.cp.rest.client.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,9 +9,9 @@ import javax.annotation.Nonnull;
 
 import lombok.experimental.UtilityClass;
 
-import cz.novros.cp.jms.entity.Attributes;
-import cz.novros.cp.jms.entity.Parcel;
-import cz.novros.cp.jms.entity.State;
+import cz.novros.cp.common.entity.Attributes;
+import cz.novros.cp.common.entity.Parcel;
+import cz.novros.cp.common.entity.State;
 import cz.novros.cp.rest.client.entity.States;
 
 @UtilityClass

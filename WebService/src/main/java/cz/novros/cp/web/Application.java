@@ -10,6 +10,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
+import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
@@ -19,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 @ComponentScan
 @SpringBootApplication
+@EnableJms
 public class Application {
 
 	public static void main(String[] args) {

@@ -1,4 +1,4 @@
-group 'cz.novros.cp'
+group 'cz.novros.cp.jms'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
@@ -25,8 +25,7 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '23.0'
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.16.18'
 
-    // MQ
     compile("org.springframework.boot:spring-boot-starter-activemq")
-    compile("org.apache.activemq:activemq-broker")
-    compile("com.fasterxml.jackson.core:jackson-databind")
+
+    compile project(':common')
 }

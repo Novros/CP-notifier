@@ -4,10 +4,12 @@ import javax.annotation.Nonnull;
 
 import lombok.experimental.UtilityClass;
 
+/**
+ * Contains common constants for jms communication.
+ */
 @UtilityClass
-public class CommonConstants {
+public class JmsConstants {
 
-	public static final String TRACKING_NUMBER_DELIMITER = ";";
 	public static final String RESPONSE_PREFIX = "response-";
 	public static final String SELECTOR = "JMSCorrelationID=";
 

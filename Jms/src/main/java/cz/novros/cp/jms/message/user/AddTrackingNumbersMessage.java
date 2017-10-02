@@ -9,6 +9,6 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PACKAGE)
 public class AddTrackingNumbersMessage extends UserMessage {
-	
+
 	Collection<String> trackingNumbers;
 }

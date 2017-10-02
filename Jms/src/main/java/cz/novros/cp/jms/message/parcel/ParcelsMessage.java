@@ -6,7 +6,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-import cz.novros.cp.jms.entity.Parcel;
+import cz.novros.cp.common.entity.Parcel;
 import cz.novros.cp.jms.message.AbstractJmsMessage;
 
 @Data

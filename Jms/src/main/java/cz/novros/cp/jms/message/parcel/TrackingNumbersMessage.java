@@ -11,6 +11,6 @@ import cz.novros.cp.jms.message.AbstractJmsMessage;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TrackingNumbersMessage extends AbstractJmsMessage {
-	
+
 	Collection<String> trackingNumbers;
 }

@@ -2,6 +2,9 @@ package cz.novros.cp.jms;
 
 import lombok.experimental.UtilityClass;
 
+/**
+ * This class contains names of jms queues of each service.
+ */
 @UtilityClass
 public class QueueNames {
 

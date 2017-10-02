@@ -40,6 +40,8 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-activemq")
     compile("org.apache.activemq:activemq-broker")
     compile("com.fasterxml.jackson.core:jackson-databind")
+    
+    compile("org.springframework.boot:spring-boot-starter-web")
 
     // Good libs
     compile group: 'com.google.guava', name: 'guava', version: '23.0'

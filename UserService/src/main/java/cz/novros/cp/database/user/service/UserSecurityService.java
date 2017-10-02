@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.hash.Hashing;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,21 +26,19 @@ public class UserSecurityService implements SecurityUserService {
 	UserRepository userRepository;
 
 	@Override
-	public boolean registerUser(@Nonnull final String username, @Nonnull final String password) {
-		final User user = new User();
-		user.setEmail(username);
-		user.setPassword(hashPassword(password));
+	public boolean registerUser(@Nonnull final cz.novros.cp.common.entity.User user) {
+		final User databaseUser = new User(user.getUsername(), hashPassword(user.getPassword()), ImmutableSet.of());
 
-		if (userRepository.findOne(username) != null) {
+		if (userRepository.findOne(databaseUser.getEmail()) != null) {
 			return false;
 		}
 
-		return userRepository.save(user) != null;
+		return userRepository.save(databaseUser) != null;
 	}
 
 	@Override
-	public boolean loginUser(@Nonnull final String username, @Nonnull final String password) {
-		return userRepository.findByEmailAndPassword(username, hashPassword(password)) != null;
+	public boolean loginUser(@Nonnull final cz.novros.cp.common.entity.User user) {
+		return userRepository.findByEmailAndPassword(user.getUsername(), hashPassword(user.getPassword())) != null;
 	}
 
 	private static String hashPassword(@Nonnull final String password) {

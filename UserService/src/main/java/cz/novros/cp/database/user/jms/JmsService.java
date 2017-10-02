@@ -5,14 +5,16 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
+import cz.novros.cp.common.entity.User;
 import cz.novros.cp.database.user.service.UserSecurityService;
 import cz.novros.cp.database.user.service.UserService;
 import cz.novros.cp.jms.QueueNames;
@@ -28,7 +30,8 @@ import cz.novros.cp.jms.service.AbstractJmsService;
 import cz.novros.cp.jms.service.SecurityUserJmsService;
 import cz.novros.cp.jms.service.UserJmsService;
 
-@Component
+@Service
+@Profile("jms")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class JmsService extends AbstractJmsService implements UserJmsService, SecurityUserJmsService {
@@ -66,7 +69,7 @@ public class JmsService extends AbstractJmsService implements UserJmsService, Se
 		final String username = message.getUsername();
 		log.debug("Creating user with username: {}", username);
 
-		final boolean registered = userSecurityService.registerUser(username, message.getPassword());
+		final boolean registered = userSecurityService.registerUser(new User(username, message.getPassword()));
 
 		final BooleanResponseMessage responseMessage = new BooleanResponseMessage();
 		responseMessage.setOk(registered);
@@ -82,7 +85,7 @@ public class JmsService extends AbstractJmsService implements UserJmsService, Se
 		final String username = message.getUsername();
 		log.debug("Trying to login user({}).", username);
 
-		final boolean logged = userSecurityService.loginUser(username, message.getPassword());
+		final boolean logged = userSecurityService.loginUser(new User(username, message.getPassword()));
 
 		final BooleanResponseMessage responseMessage = new BooleanResponseMessage();
 		responseMessage.setOk(logged);

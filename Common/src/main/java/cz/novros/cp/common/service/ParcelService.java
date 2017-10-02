@@ -20,4 +20,21 @@ public interface ParcelService {
 	 */
 	@Nonnull
 	Collection<Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers);
+
+	/**
+	 * Save parcels into database.
+	 *
+	 * @param parcels Parcels which will be saved.
+	 *
+	 * @return Return currently saved parcels.
+	 */
+	@Nonnull
+	Collection<Parcel> saveParcels(@Nonnull final Collection<Parcel> parcels);
+
+	/**
+	 * Remove parcels from database.
+	 *
+	 * @param trackingNumbers Parcels which will be deleted.
+	 */
+	void removeParcels(@Nonnull final Collection<String> trackingNumbers);
 }

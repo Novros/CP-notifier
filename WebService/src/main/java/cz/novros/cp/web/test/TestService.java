@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import cz.novros.cp.common.entity.Attributes;
 import cz.novros.cp.common.entity.Parcel;
 import cz.novros.cp.common.entity.State;
+import cz.novros.cp.common.entity.User;
 import cz.novros.cp.common.service.ParcelService;
 import cz.novros.cp.common.service.SecurityUserService;
 import cz.novros.cp.common.service.UserService;
@@ -46,14 +47,14 @@ public class TestService implements UserService, ParcelService, SecurityUserServ
 		});
 	}
 
+	@Nonnull
 	@Override
-	public boolean registerUser(@Nonnull final String username, @Nonnull final String password) {
-		return true;
+	public Collection<Parcel> saveParcels(@Nonnull final Collection<Parcel> parcels) {
+		return ImmutableList.of();
 	}
 
 	@Override
-	public boolean loginUser(@Nonnull final String username, @Nonnull final String password) {
-		return true;
+	public void removeParcels(@Nonnull final Collection<String> trackingNumbers) {
 	}
 
 	@Nonnull
@@ -113,5 +114,15 @@ public class TestService implements UserService, ParcelService, SecurityUserServ
 		state.setDate(new Date());
 
 		return state;
+	}
+
+	@Override
+	public boolean registerUser(@Nonnull final User user) {
+		return true;
+	}
+
+	@Override
+	public boolean loginUser(@Nonnull final User user) {
+		return true;
 	}
 }

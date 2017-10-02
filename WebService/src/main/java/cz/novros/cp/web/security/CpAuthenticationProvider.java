@@ -40,7 +40,7 @@ public class CpAuthenticationProvider implements AuthenticationProvider {
 		final String userName = authentication.getName().trim();
 		final String password = authentication.getCredentials().toString().trim();
 
-		final boolean logged = userService.loginUser(userName, password);
+		final boolean logged = userService.loginUser(new cz.novros.cp.common.entity.User(userName, password));
 
 		if (logged) {
 			final Collection<GrantedAuthority> grantedAuths = ImmutableSet.of(new SimpleGrantedAuthority("USER"));

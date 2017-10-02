@@ -9,7 +9,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-import cz.novros.cp.jms.JmsConstants;
+import cz.novros.cp.common.CommonConstants;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -22,6 +22,6 @@ public class TrackingNumbersForm {
 			return ImmutableList.of();
 		}
 
-		return Arrays.asList(trackingNumbers.split(JmsConstants.TRACKING_NUMBER_DELIMITER));
+		return Arrays.asList(trackingNumbers.split(CommonConstants.TRACKING_NUMBER_DELIMITER));
 	}
 }

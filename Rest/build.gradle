@@ -24,6 +24,8 @@ repositories {
 dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '23.0'
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.16.18'
+    
+    compile("org.springframework:spring-web")
 
     compile project(':common')
 }

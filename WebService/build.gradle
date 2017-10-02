@@ -1,5 +1,5 @@
 group 'cz.novros.cp.web'
-version '1.0-SNAPSHOT'
+version '1.0.0'
 
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -19,6 +19,11 @@ buildscript {
     }
 }
 
+jar {
+    baseName = 'cp-web'
+    version = '1.0.0'
+}
+
 task buildDocker(type: Docker, dependsOn: build) {
     applicationName = jar.baseName
     dockerfile = file('Dockerfile')
@@ -33,11 +38,6 @@ task buildDocker(type: Docker, dependsOn: build) {
 repositories {
     mavenCentral()
     maven { url "https://repository.jboss.org/nexus/content/repositories/releases" }
-}
-
-jar {
-    baseName = 'cp-web'
-    version = '1.0.0'
 }
 
 dependencies {

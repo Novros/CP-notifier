@@ -24,9 +24,9 @@ public abstract class AbstractJmsService extends cz.novros.cp.jms.service.Abstra
 		fillBasicInfo((AbstractJmsMessage) message, username);
 	}
 
-	protected static void fillBasicInfo(@Nonnull final AbstractJmsMessage message, @Nonnull final String username) {
+	protected static void fillBasicInfo(@Nonnull final AbstractJmsMessage message, @Nonnull final String id) {
 		message.setSenderQueue(QueueNames.WEB_QUEUE);
-		message.setMessageId(username + new Date().getTime());
+		message.setMessageId(id + new Date().getTime());
 	}
 
 }

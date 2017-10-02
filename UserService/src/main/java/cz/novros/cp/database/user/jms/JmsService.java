@@ -1,12 +1,9 @@
 package cz.novros.cp.database.user.jms;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
@@ -14,8 +11,9 @@ import org.springframework.stereotype.Component;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
-import cz.novros.cp.database.user.entity.User;
+import cz.novros.cp.database.user.service.UserSecurityService;
 import cz.novros.cp.database.user.service.UserService;
 import cz.novros.cp.jms.QueueNames;
 import cz.novros.cp.jms.message.AbstractJmsMessage;
@@ -25,20 +23,25 @@ import cz.novros.cp.jms.message.user.AddTrackingNumbersMessage;
 import cz.novros.cp.jms.message.user.LoginUserMessage;
 import cz.novros.cp.jms.message.user.ReadTrackingNumbersMessage;
 import cz.novros.cp.jms.message.user.RegisterUserMessage;
+import cz.novros.cp.jms.message.user.RemoveTrackingNumbersMessage;
 import cz.novros.cp.jms.service.AbstractJmsService;
+import cz.novros.cp.jms.service.SecurityUserJmsService;
+import cz.novros.cp.jms.service.UserJmsService;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class JmsService extends AbstractJmsService {
-
-	private static final Logger log = LoggerFactory.getLogger(JmsService.class);
+@Slf4j
+public class JmsService extends AbstractJmsService implements UserJmsService, SecurityUserJmsService {
 
 	UserService userService;
+	UserSecurityService userSecurityService;
 
 	@Autowired
-	public JmsService(@Nonnull final UserService userService, final JmsTemplate jmsTemplate) {
+	protected JmsService(@Nonnull final JmsTemplate jmsTemplate, final UserService userService, final UserSecurityService userSecurityService) {
 		super(jmsTemplate);
+
 		this.userService = userService;
+		this.userSecurityService = userSecurityService;
 	}
 
 	@JmsListener(destination = QueueNames.DATABASE_USER_QUEUE, containerFactory = "myFactory")
@@ -49,6 +52,8 @@ public class JmsService extends AbstractJmsService {
 			loginUser((LoginUserMessage) message);
 		} else if (message instanceof AddTrackingNumbersMessage) {
 			addTrackingNumbers((AddTrackingNumbersMessage) message);
+		} else if (message instanceof RemoveTrackingNumbersMessage) {
+			removeTrackingNumbers((RemoveTrackingNumbersMessage) message);
 		} else if (message instanceof ReadTrackingNumbersMessage) {
 			readTrackingNumbers((ReadTrackingNumbersMessage) message);
 		} else {
@@ -56,75 +61,74 @@ public class JmsService extends AbstractJmsService {
 		}
 	}
 
-	private void registerUser(@Nonnull final RegisterUserMessage message) {
-		final String email = message.getUsername();
-		log.debug("Creating user with email: {}", email);
+	@Override
+	public void registerUser(@Nonnull final RegisterUserMessage message) {
+		final String username = message.getUsername();
+		log.debug("Creating user with username: {}", username);
 
-		final User user = userService.createUser(email, message.getPassword());
+		final boolean registered = userSecurityService.registerUser(username, message.getPassword());
 
 		final BooleanResponseMessage responseMessage = new BooleanResponseMessage();
-		if (user == null) {
-			log.error("User({}) was not created!", email);
-			responseMessage.setOk(false);
-			responseMessage.setError(false);
-		} else {
-			log.info("User with email[{}] was created.", email);
-			responseMessage.setOk(true);
-		}
+		responseMessage.setOk(registered);
+		responseMessage.setError(!registered);
+
+		log.error("User({}) was {} created!", username, registered ? "" : "not");
 
 		sendResponse(message, responseMessage);
 	}
 
-	private void loginUser(@Nonnull final LoginUserMessage message) {
-		final String email = message.getUsername();
-		log.debug("Trying to login user({}).", email);
+	@Override
+	public void loginUser(@Nonnull final LoginUserMessage message) {
+		final String username = message.getUsername();
+		log.debug("Trying to login user({}).", username);
 
-		final User user = userService.loginUser(email, message.getPassword());
+		final boolean logged = userSecurityService.loginUser(username, message.getPassword());
 
 		final BooleanResponseMessage responseMessage = new BooleanResponseMessage();
-		if (user == null) {
-			log.error("User({}) was not logged in!", email);
-			responseMessage.setOk(false);
-			responseMessage.setError(false);
-		} else {
-			log.debug("User({}) was successfully logged.", email);
-			responseMessage.setOk(true);
-		}
+		responseMessage.setOk(logged);
+		responseMessage.setError(!logged);
+
+		log.error("User({}) was {} logged in!", username, logged ? "" : "not");
 
 		sendResponse(message, responseMessage);
 	}
 
-	private void addTrackingNumbers(@Nonnull final AddTrackingNumbersMessage message) {
-		final String email = message.getUsername();
-		log.debug("Adding tracking numbers to user({}).", email);
+	@Override
+	public void addTrackingNumbers(@Nonnull final AddTrackingNumbersMessage message) {
+		final String username = message.getUsername();
+		log.debug("Adding tracking numbers to user({}).", username);
 
-		final Set<String> trackingNumbers = new HashSet<>(message.getTrackingNumbers().size());
-		trackingNumbers.addAll(message.getTrackingNumbers());
+		final TrackingNumbersMessage trackingNumbersMessage = new TrackingNumbersMessage();
+		trackingNumbersMessage.setTrackingNumbers(userService.addTrackingNumbers(username, message.getTrackingNumbers()));
 
-		final User user = userService.addTrackingNumbers(email, trackingNumbers);
+		log.info("Tracking numbers of user({}) where updated(operation add)!", username);
 
-		final BooleanResponseMessage responseMessage = new BooleanResponseMessage();
-		if (user == null) {
-			log.error("Could not add tracking numbers to user({})!", email);
-			responseMessage.setOk(false);
-			responseMessage.setError(false);
-		} else {
-			log.info("Tracking numbers (count={}) to user({}) where added!", trackingNumbers.size(), email);
-			responseMessage.setOk(true);
-		}
-
-		sendResponse(message, responseMessage);
+		sendResponse(message, trackingNumbersMessage);
 	}
 
-	private void readTrackingNumbers(@Nonnull final ReadTrackingNumbersMessage message) {
-		final String email = message.getUsername();
-		log.debug("Reading tracking numbers for user({}).", email);
+	@Override
+	public void removeTrackingNumbers(@Nonnull final RemoveTrackingNumbersMessage message) {
+		final String username = message.getUsername();
+		log.debug("Removing tracking numbers to user({}).", username);
 
-		final Set<String> numbers = userService.readTrackingNumbers(email);
+		final TrackingNumbersMessage trackingNumbersMessage = new TrackingNumbersMessage();
+		trackingNumbersMessage.setTrackingNumbers(userService.removeTrackingNumbers(username, message.getTrackingNumbers()));
+
+		log.info("Tracking numbers of user({}) where updated(operation remove)!", username);
+
+		sendResponse(message, trackingNumbersMessage);
+	}
+
+	@Override
+	public void readTrackingNumbers(@Nonnull final ReadTrackingNumbersMessage message) {
+		final String username = message.getUsername();
+		log.debug("Reading tracking numbers for user({}).", username);
+
+		final Set<String> numbers = userService.readTrackingNumbers(username);
 		final TrackingNumbersMessage trackingNumbersMessage = new TrackingNumbersMessage();
 		trackingNumbersMessage.setTrackingNumbers(numbers);
 
-		log.info("Tracking numbers (count={}) for user({}) where read!", numbers.size(), email);
+		log.info("Tracking numbers (count={}) for user({}) where read!", numbers.size(), username);
 
 		sendResponse(message, trackingNumbersMessage);
 	}

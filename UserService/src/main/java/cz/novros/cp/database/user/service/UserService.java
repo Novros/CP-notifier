@@ -1,18 +1,17 @@
 package cz.novros.cp.database.user.service;
 
-import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.hash.Hashing;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import cz.novros.cp.database.user.dao.UserRepository;
@@ -20,53 +19,49 @@ import cz.novros.cp.database.user.entity.User;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class UserService {
+@AllArgsConstructor(onConstructor = @__(@Autowired))
+public class UserService implements cz.novros.cp.common.service.UserService {
 
 	UserRepository userRepository;
 
-	@Autowired
-	public UserService(@Nonnull final UserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
-
-	@Nullable
-	public User loginUser(@Nonnull final String email, @Nonnull final String password) {
-		return userRepository.findByEmailAndPassword(email, hashPassword(password));
-	}
-
-	@Nullable
-	public User createUser(@Nonnull final String email, @Nonnull final String password) {
-		final User user = new User();
-		user.setEmail(email);
-		user.setPassword(hashPassword(password));
-
-		if (userRepository.findByEmail(email) != null) {
-			return null;
-		}
-
-		return userRepository.save(user);
-	}
-
-	@Nullable
-	public User addTrackingNumbers(@Nonnull final String email, @Nonnull final Set<String> trackingNumbers) {
-		final User user = userRepository.findOne(email);
+	@Nonnull
+	@Override
+	public Collection<String> addTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
+		User user = userRepository.findOne(username);
 
 		if (user == null) {
-			return null;
+			return ImmutableSet.of();
 		}
 
 		user.getTrackingNumbers().addAll(trackingNumbers);
+		user = userRepository.save(user);
 
-		return userRepository.save(user);
+		return user.getTrackingNumbers();
+	}
+
+	@Nonnull
+	@Override
+	public Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
+		User user = userRepository.findOne(username);
+
+		if (user == null) {
+			return ImmutableSet.of();
+		}
+
+		user.getTrackingNumbers().removeAll(trackingNumbers);
+		user = userRepository.save(user);
+
+		return user.getTrackingNumbers();
 	}
 
 	@Nonnull
 	public Set<String> readTrackingNumbers(@Nonnull final String email) {
-		final User user = userRepository.findByEmail(email);
-		return user == null ? ImmutableSet.of() : user.getTrackingNumbers();
-	}
+		final User user = userRepository.findOne(email);
 
-	private static String hashPassword(@Nonnull final String password) {
-		return Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
+		if (user == null) {
+			return ImmutableSet.of();
+		}
+
+		return user.getTrackingNumbers();
 	}
 }

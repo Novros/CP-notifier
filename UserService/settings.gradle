@@ -1,4 +1,10 @@
 rootProject.name = 'userService'
 
-include ':jmsShared'
-project(':jmsShared').projectDir = new File("../Jms")
+include ':common'
+project(':common').projectDir = new File("../Common")
+
+include ':jms'
+project(':jms').projectDir = new File("../Jms")
+
+include ':rest'
+project(':rest').projectDir = new File("../Rest")

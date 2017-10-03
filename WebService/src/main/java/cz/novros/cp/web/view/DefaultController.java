@@ -84,7 +84,7 @@ public class DefaultController {
 	}
 
 	private String displayTrackedParcels(@Nonnull final Model model, @Nullable final Collection<Parcel> parcels) {
-		model.addAttribute("trackingNumbers", parcels == null ? getParcelsOfCurrentUser() :
+		model.addAttribute("parcels", parcels == null ? getParcelsOfCurrentUser() :
 				parcels);
 		return "tracked_parcels";
 	}

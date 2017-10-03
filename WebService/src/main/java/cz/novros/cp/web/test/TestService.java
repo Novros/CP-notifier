@@ -2,6 +2,7 @@ package cz.novros.cp.web.test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -38,7 +39,7 @@ public class TestService implements UserService, ParcelService, SecurityUserServ
 
 	@Nonnull
 	@Override
-	public Collection<Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers) {
+	public Collection<Parcel> readParcels(@Nonnull final String[] trackingNumbers) {
 		return Collections2.transform(readTrackingNumbers("a"), new Function<String, Parcel>() {
 			@Nullable
 			@Override
@@ -55,20 +56,20 @@ public class TestService implements UserService, ParcelService, SecurityUserServ
 	}
 
 	@Override
-	public void removeParcels(@Nonnull final Collection<String> trackingNumbers) {
+	public void removeParcels(@Nonnull final String[] trackingNumbers) {
 	}
 
 	@Nonnull
 	@Override
-	public Collection<String> addTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
-		serviceTrackingNumbers.addAll(trackingNumbers);
+	public Collection<String> addTrackingNumbers(@Nonnull final String username, @Nonnull final String[] trackingNumbers) {
+		serviceTrackingNumbers.addAll(Arrays.asList(trackingNumbers));
 		return serviceTrackingNumbers;
 	}
 
 	@Nonnull
 	@Override
-	public Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
-		serviceTrackingNumbers.removeAll(trackingNumbers);
+	public Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nonnull final String[] trackingNumbers) {
+		serviceTrackingNumbers.removeAll(Arrays.asList(trackingNumbers));
 		return serviceTrackingNumbers;
 	}
 
@@ -128,7 +129,7 @@ public class TestService implements UserService, ParcelService, SecurityUserServ
 	}
 
 	@Override
-	public Collection<Parcel> refreshParcels(@Nonnull final Collection<String> trackingNumbers) {
+	public Collection<Parcel> refreshParcels(@Nonnull final String[] trackingNumbers) {
 		return readParcels(trackingNumbers);
 	}
 }

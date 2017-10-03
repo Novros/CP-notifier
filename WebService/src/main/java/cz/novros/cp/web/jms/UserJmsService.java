@@ -1,5 +1,6 @@
 package cz.novros.cp.web.jms;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
 import cz.novros.cp.common.service.UserService;
-import cz.novros.cp.jms.JmsConstants;
 import cz.novros.cp.jms.QueueNames;
 import cz.novros.cp.jms.message.parcel.TrackingNumbersMessage;
 import cz.novros.cp.jms.message.user.AddTrackingNumbersMessage;
@@ -31,7 +31,7 @@ public class UserJmsService extends AbstractJmsService implements UserService {
 
 	@Nonnull
 	@Override
-	public Collection<String> addTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
+	public Collection<String> addTrackingNumbers(@Nonnull final String username, @Nonnull final String[] trackingNumbers) {
 		log.debug("Adding tracking numbers to user({}).", username);
 
 		final AddTrackingNumbersMessage message = new AddTrackingNumbersMessage();
@@ -39,16 +39,16 @@ public class UserJmsService extends AbstractJmsService implements UserService {
 		message.setTrackingNumbers(trackingNumbers);
 
 		jmsTemplate.convertAndSend(QueueNames.DATABASE_USER_QUEUE, message);
-		final TrackingNumbersMessage trackingNumbersMessage = (TrackingNumbersMessage) jmsTemplate.receiveSelectedAndConvert(message.getSenderQueue(), JmsConstants.getResponseSelector(message.getMessageId()));
+		final TrackingNumbersMessage trackingNumbersMessage = recieveResponse(message);
 
 		log.info("Tracking numbers to user({}) were " + (trackingNumbersMessage.isError() ? "not " : "") + "added.", username);
 
-		return trackingNumbersMessage.getTrackingNumbers();
+		return Arrays.asList(trackingNumbersMessage.getTrackingNumbers());
 	}
 
 	@Nonnull
 	@Override
-	public Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
+	public Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nonnull final String[] trackingNumbers) {
 		log.debug("Removing tracking numbers from user({}).", username);
 
 		final RemoveTrackingNumbersMessage message = new RemoveTrackingNumbersMessage();
@@ -56,11 +56,11 @@ public class UserJmsService extends AbstractJmsService implements UserService {
 		message.setTrackingNumbers(trackingNumbers);
 
 		jmsTemplate.convertAndSend(QueueNames.DATABASE_USER_QUEUE, message);
-		final TrackingNumbersMessage trackingNumbersMessage = (TrackingNumbersMessage) jmsTemplate.receiveSelectedAndConvert(message.getSenderQueue(), JmsConstants.getResponseSelector(message.getMessageId()));
+		final TrackingNumbersMessage trackingNumbersMessage = recieveResponse(message);
 
 		log.info("Tracking numbers from user({}) were " + (trackingNumbersMessage.isError() ? "not " : "") + "removed.", username);
 
-		return trackingNumbersMessage.getTrackingNumbers();
+		return Arrays.asList(trackingNumbersMessage.getTrackingNumbers());
 	}
 
 	@Override
@@ -71,10 +71,10 @@ public class UserJmsService extends AbstractJmsService implements UserService {
 		fillBasicInfo(message, username);
 
 		jmsTemplate.convertAndSend(QueueNames.DATABASE_USER_QUEUE, message);
-		final TrackingNumbersMessage trackingNumbersMessage = (TrackingNumbersMessage) jmsTemplate.receiveSelectedAndConvert(message.getSenderQueue(), JmsConstants.getResponseSelector(message.getMessageId()));
+		final TrackingNumbersMessage trackingNumbersMessage = recieveResponse(message);
 
-		log.debug("Read tracking numbers (size={}) for user({}).", trackingNumbersMessage.getTrackingNumbers().size(), username);
+		log.debug("Read tracking numbers (size={}) for user({}).", trackingNumbersMessage.getTrackingNumbers().length, username);
 
-		return trackingNumbersMessage.getTrackingNumbers();
+		return Arrays.asList(trackingNumbersMessage.getTrackingNumbers());
 	}
 }

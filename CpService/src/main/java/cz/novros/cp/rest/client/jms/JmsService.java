@@ -34,7 +34,7 @@ public class JmsService extends AbstractJmsService implements CzechPostJmsServic
 
 	@Autowired
 	public JmsService(@Nonnull final JmsTemplate jmsTemplate, final CzechPostRestClientService restClientService) {
-		super(jmsTemplate);
+		super(jmsTemplate, QueueNames.REST_CP_QUEUE);
 		this.restClientService = restClientService;
 	}
 

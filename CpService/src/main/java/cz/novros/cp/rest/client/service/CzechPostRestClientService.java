@@ -1,8 +1,10 @@
 package cz.novros.cp.rest.client.service;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -28,7 +30,11 @@ public class CzechPostRestClientService implements CzechPostService {
 	}
 
 	@Override
-	public Collection<cz.novros.cp.common.entity.Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers) {
-		return trackingNumbers.isEmpty() ? ImmutableList.of() : EntityConverter.convertParcels(restClient.readParcels(trackingNumbers));
+	public Collection<cz.novros.cp.common.entity.Parcel> readParcels(@Nullable final String[] trackingNumbers) {
+		if (trackingNumbers == null || trackingNumbers.length == 0) {
+			return ImmutableList.of();
+		} else {
+			return EntityConverter.convertParcels(restClient.readParcels(Arrays.asList(trackingNumbers)));
+		}
 	}
 }

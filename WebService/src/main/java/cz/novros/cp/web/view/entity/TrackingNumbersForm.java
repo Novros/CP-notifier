@@ -1,9 +1,6 @@
 package cz.novros.cp.web.view.entity;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import com.google.common.collect.ImmutableList;
+import javax.annotation.Nonnull;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -17,11 +14,12 @@ public class TrackingNumbersForm {
 
 	String trackingNumbers;
 
-	public Collection<String> getTrackingNumbersCollection() {
+	@Nonnull
+	public String[] getTrackingNumbersArray() {
 		if (trackingNumbers == null) {
-			return ImmutableList.of();
+			return new String[]{};
 		}
 
-		return Arrays.asList(trackingNumbers.split(CommonConstants.TRACKING_NUMBER_DELIMITER));
+		return trackingNumbers.split(CommonConstants.TRACKING_NUMBER_DELIMITER);
 	}
 }

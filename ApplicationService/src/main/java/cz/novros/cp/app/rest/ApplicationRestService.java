@@ -1,5 +1,6 @@
 package cz.novros.cp.app.rest;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -37,12 +38,12 @@ public class ApplicationRestService extends AbstractRestService implements cz.no
 
 	@RequestMapping(value = EndpointNames.REFRESH_PARCEL_ENDPOINT, method = RequestMethod.POST)
 	@Override
-	public Collection<Parcel> refreshParcels(@RequestBody @Nonnull final Collection<String> trackingNumbers) {
-		log.info("Reading parcels with tracking numbers({}) from czech post service.", trackingNumbers);
+	public Collection<Parcel> refreshParcels(@RequestBody @Nonnull final String[] trackingNumbers) {
+		log.info("Reading parcels with tracking numbers({}) from czech post service.", Arrays.toString(trackingNumbers));
 
 		Collection<Parcel> parcels = czechPostService.readParcels(trackingNumbers);
 
-		log.info("Parcels(count={}) with tracking numbers({}) were read from czech post service.", parcels.size(), trackingNumbers);
+		log.info("Parcels(count={}) with tracking numbers({}) were read from czech post service.", parcels.size(), Arrays.toString(trackingNumbers));
 		log.info("Saving updated parcels(count={}) to parcel service.", parcels.size());
 
 		parcels = parcelService.saveParcels(parcels);

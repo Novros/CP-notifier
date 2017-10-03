@@ -36,8 +36,8 @@ public class UserRestService extends AbstractRestService implements UserService 
 	@Nonnull
 	@Override
 	@RequestMapping(value = EndpointNames.ADD_TRACKING_USER_ENDPOINT, method = RequestMethod.POST)
-	public Collection<String> addTrackingNumbers(@PathVariable @Nonnull final String username, @RequestBody @Nonnull final Collection<String> trackingNumbers) {
-		log.info("Adding tracking numbers(count={}) to user({}).", trackingNumbers.size(), username);
+	public Collection<String> addTrackingNumbers(@PathVariable @Nonnull final String username, @RequestBody @Nonnull final String[] trackingNumbers) {
+		log.info("Adding tracking numbers(count={}) to user({}).", trackingNumbers.length, username);
 
 		final Collection<String> updatedTrackingNumbers = userService.addTrackingNumbers(username, trackingNumbers);
 
@@ -49,8 +49,8 @@ public class UserRestService extends AbstractRestService implements UserService 
 	@Nonnull
 	@Override
 	@RequestMapping(value = EndpointNames.REMOVE_TRACKING_USER_ENDPOINT, method = RequestMethod.POST)
-	public Collection<String> removeTrackingNumbers(@PathVariable @Nonnull final String username, @RequestBody @Nonnull final Collection<String> trackingNumbers) {
-		log.info("Removing tracking numbers(count={}) to user({}).", trackingNumbers.size(), username);
+	public Collection<String> removeTrackingNumbers(@PathVariable @Nonnull final String username, @RequestBody @Nonnull final String[] trackingNumbers) {
+		log.info("Removing tracking numbers(count={}) to user({}).", trackingNumbers.length, username);
 
 		final Collection<String> updatedTrackingNumbers = userService.removeTrackingNumbers(username, trackingNumbers);
 

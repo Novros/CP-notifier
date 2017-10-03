@@ -1,6 +1,7 @@
 package cz.novros.cp.database.parcel.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -48,8 +49,8 @@ public class ParcelService implements cz.novros.cp.common.service.ParcelService 
 
 	@Nonnull
 	@Override
-	public Collection<cz.novros.cp.common.entity.Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers) {
-		final Collection<Parcel> databaseParcels = parcelRepository.findByParcelTrackingNumberIn(trackingNumbers);
+	public Collection<cz.novros.cp.common.entity.Parcel> readParcels(@Nonnull final String[] trackingNumbers) {
+		final Collection<Parcel> databaseParcels = parcelRepository.findByParcelTrackingNumberIn(Arrays.asList(trackingNumbers));
 		return databaseParcels == null ? ImmutableList.of() : EntityConverter.convertParcelToCommon(databaseParcels);
 	}
 
@@ -62,7 +63,7 @@ public class ParcelService implements cz.novros.cp.common.service.ParcelService 
 	}
 
 	@Override
-	public void removeParcels(@Nonnull final Collection<String> trackingNumbers) {
+	public void removeParcels(@Nonnull final String[] trackingNumbers) {
 		for (final String tracking : trackingNumbers) {
 			parcelRepository.delete(tracking);
 		}

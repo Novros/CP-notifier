@@ -1,7 +1,5 @@
 package cz.novros.cp.jms.message.user;
 
-import java.util.Collection;
-
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -10,5 +8,5 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PACKAGE)
 public class RemoveTrackingNumbersMessage extends UserMessage {
 
-	Collection<String> trackingNumbers;
+	String[] trackingNumbers;
 }

@@ -1,13 +1,10 @@
 package cz.novros.cp.web.jms;
 
-import java.util.Date;
-
 import javax.annotation.Nonnull;
 
 import org.springframework.jms.core.JmsTemplate;
 
 import cz.novros.cp.jms.QueueNames;
-import cz.novros.cp.jms.message.AbstractJmsMessage;
 import cz.novros.cp.jms.message.user.UserMessage;
 
 /**
@@ -16,17 +13,11 @@ import cz.novros.cp.jms.message.user.UserMessage;
 public abstract class AbstractJmsService extends cz.novros.cp.jms.service.AbstractJmsService {
 
 	protected AbstractJmsService(@Nonnull final JmsTemplate jmsTemplate) {
-		super(jmsTemplate);
+		super(jmsTemplate, QueueNames.WEB_QUEUE);
 	}
 
-	protected static void fillBasicInfo(@Nonnull final UserMessage message, @Nonnull final String username) {
+	protected void fillBasicInfo(@Nonnull final UserMessage message, @Nonnull final String username) {
 		message.setUsername(username);
-		fillBasicInfo((AbstractJmsMessage) message, username);
+		fillBasicInfo(message);
 	}
-
-	protected static void fillBasicInfo(@Nonnull final AbstractJmsMessage message, @Nonnull final String id) {
-		message.setSenderQueue(QueueNames.WEB_QUEUE);
-		message.setMessageId(id + new Date().getTime());
-	}
-
 }

@@ -4,7 +4,9 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +38,12 @@ public class CzechPostRestClient extends AbstractRestClient implements CzechPost
 	}
 
 	@Override
-	public Collection<Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers) {
-		log.debug("Reading parcels with tracking numbers({}) from czech post rest service.", trackingNumbers);
+	public Collection<Parcel> readParcels(@Nullable final String[] trackingNumbers) {
+		log.debug("Reading parcels with tracking numbers({}) from czech post rest service.", Arrays.toString(trackingNumbers));
+		
+		if (trackingNumbers == null || trackingNumbers.length == 0) {
+			return ImmutableList.of();
+		}
 
 		final Parcel[] parcels = restTemplate.getForObject(getUrl(EndpointNames.READ_PARCELS_ENDPOINT) + "?numbers={numbers}", Parcel[].class, ImmutableMap.of("numbers", trackingNumbers));
 

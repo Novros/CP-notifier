@@ -1,7 +1,6 @@
 package cz.novros.cp.app.jms;
 
 import java.io.IOException;
-import java.util.Date;
 
 import javax.annotation.Nonnull;
 
@@ -15,7 +14,6 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
-import cz.novros.cp.jms.JmsConstants;
 import cz.novros.cp.jms.QueueNames;
 import cz.novros.cp.jms.message.AbstractJmsMessage;
 import cz.novros.cp.jms.message.application.RefreshParcelsMessage;
@@ -32,7 +30,7 @@ public class ApplicationJmsService extends AbstractJmsService implements cz.novr
 
 	@Autowired
 	public ApplicationJmsService(@Nonnull final JmsTemplate jmsTemplate) {
-		super(jmsTemplate);
+		super(jmsTemplate, QueueNames.APPLICATION_QUEUE);
 	}
 
 	@JmsListener(destination = QueueNames.APPLICATION_QUEUE, containerFactory = "myFactory")
@@ -53,7 +51,7 @@ public class ApplicationJmsService extends AbstractJmsService implements cz.novr
 		trackingNumbersMessage.setTrackingNumbers(message.getTrackingNumbers());
 
 		jmsTemplate.convertAndSend(QueueNames.REST_CP_QUEUE, trackingNumbersMessage);
-		ParcelsMessage parcelsMessage = (ParcelsMessage) jmsTemplate.receiveSelectedAndConvert(trackingNumbersMessage.getSenderQueue(), JmsConstants.getResponseSelector(trackingNumbersMessage.getMessageId()));
+		ParcelsMessage parcelsMessage = recieveResponse(trackingNumbersMessage);
 
 		log.info("Parcels(count={}) with tracking numbers({}) were read from czech post service.", parcelsMessage.getParcels().size(), message.getTrackingNumbers());
 		log.info("Saving updated parcels(count={}) to parcel service.", parcelsMessage.getParcels().size());
@@ -63,17 +61,12 @@ public class ApplicationJmsService extends AbstractJmsService implements cz.novr
 		saveParcelsMessage.setParcels(parcelsMessage.getParcels());
 
 		jmsTemplate.convertAndSend(QueueNames.DATABASE_PARCEL_QUEUE, parcelsMessage);
-		parcelsMessage = (ParcelsMessage) jmsTemplate.receiveSelectedAndConvert(saveParcelsMessage.getSenderQueue(), JmsConstants.getResponseSelector(saveParcelsMessage.getMessageId()));
+		parcelsMessage = recieveResponse(parcelsMessage);
 
 		fillBasicInfo(parcelsMessage);
 
 		log.info("Updated parcels(count={}) in parcel service and application.", parcelsMessage.getParcels().size());
 
 		sendResponse(message, parcelsMessage);
-	}
-
-	private void fillBasicInfo(@Nonnull final AbstractJmsMessage message) {
-		message.setSenderQueue(QueueNames.APPLICATION_QUEUE);
-		message.setMessageId(Long.toString(new Date().getTime()));
 	}
 }

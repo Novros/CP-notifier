@@ -1,5 +1,6 @@
 package cz.novros.cp.database.parcel.rest;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -37,12 +38,12 @@ public class ParcelRestService extends AbstractRestService implements ParcelServ
 	@Nonnull
 	@Override
 	@RequestMapping(value = EndpointNames.READ_PARCELS_ENDPOINT, method = RequestMethod.GET)
-	public Collection<Parcel> readParcels(@RequestParam("numbers") @Nonnull final Collection<String> trackingNumbers) {
-		log.debug("Reading parcels for tracking numbers({}).", trackingNumbers);
+	public Collection<Parcel> readParcels(@RequestParam("numbers") @Nonnull final String[] trackingNumbers) {
+		log.debug("Reading parcels for tracking numbers({}).", Arrays.toString(trackingNumbers));
 
 		final Collection<Parcel> parcels = parcelService.readParcels(trackingNumbers);
 
-		log.debug("Parcels for tracking numbers({}) where read. (count={})", trackingNumbers, parcels.size());
+		log.debug("Parcels for tracking numbers({}) where read. (count={})", Arrays.toString(trackingNumbers), parcels.size());
 
 		return parcels;
 	}
@@ -62,11 +63,11 @@ public class ParcelRestService extends AbstractRestService implements ParcelServ
 
 	@Override
 	@RequestMapping(value = EndpointNames.REMOVE_PARCELS_ENDPOINT, method = RequestMethod.DELETE)
-	public void removeParcels(@RequestBody @Nonnull final Collection<String> trackingNumbers) {
-		log.debug("Removing parcels from database(count={}).", trackingNumbers.size());
+	public void removeParcels(@RequestBody @Nonnull final String[] trackingNumbers) {
+		log.debug("Removing parcels with tracking numbers({}) from database.", Arrays.toString(trackingNumbers));
 
 		parcelService.removeParcels(trackingNumbers);
 
-		log.info("Parcels(count={}) were removed.", trackingNumbers.size());
+		log.info("Parcels with tracking numbers({}) were removed.", Arrays.toString(trackingNumbers));
 	}
 }

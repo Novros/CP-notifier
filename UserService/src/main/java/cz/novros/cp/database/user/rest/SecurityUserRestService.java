@@ -19,6 +19,7 @@ import cz.novros.cp.common.entity.User;
 import cz.novros.cp.common.service.SecurityUserService;
 import cz.novros.cp.database.user.service.UserSecurityService;
 import cz.novros.cp.rest.EndpointNames;
+import cz.novros.cp.rest.service.AbstractRestService;
 
 @RestController
 @RequestMapping(EndpointNames.SECURITY_SERVICE_ENDPOINT)
@@ -27,7 +28,7 @@ import cz.novros.cp.rest.EndpointNames;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
-public class SecurityUserRestService implements SecurityUserService {
+public class SecurityUserRestService extends AbstractRestService implements SecurityUserService {
 
 	UserSecurityService userSecurityService;
 

@@ -4,7 +4,9 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +26,21 @@ import cz.novros.cp.rest.service.AbstractRestClient;
 @Profile("rest")
 @Primary
 @Slf4j
-public class UserRestService extends AbstractRestClient implements UserService {
+public class UserRestClient extends AbstractRestClient implements UserService {
 
 	@Autowired
-	public UserRestService(final RestTemplate restTemplate, @Value("${cp.database.user.url}") final String serverUrl) {
+	public UserRestClient(final RestTemplate restTemplate, @Value("${cp.database.user.url}") final String serverUrl) {
 		super(restTemplate, serverUrl, EndpointNames.USER_SERVICE_ENDPOINT);
 	}
 
 	@Nonnull
 	@Override
-	public Collection<String> addTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
+	public Collection<String> addTrackingNumbers(@Nonnull final String username, @Nullable final String[] trackingNumbers) {
 		log.info("Adding tracking numbers({}) to user({}).", username, trackingNumbers);
+
+		if (trackingNumbers == null || trackingNumbers.length == 0) {
+			return ImmutableList.of();
+		}
 
 		final Collection<String> numbers = Arrays.asList(restTemplate.postForObject(getUrl(EndpointNames.ADD_TRACKING_USER_ENDPOINT), trackingNumbers, String[].class, ImmutableMap.of(EndpointNames.USERNAME_PARAM, username)));
 		log.info("Tracking numbers({}) of user({}) were updated.", numbers, username);
@@ -44,8 +50,12 @@ public class UserRestService extends AbstractRestClient implements UserService {
 
 	@Nonnull
 	@Override
-	public Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
+	public Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nullable final String[] trackingNumbers) {
 		log.info("Remove tracking numbers({}) to user({}).", username, trackingNumbers);
+
+		if (trackingNumbers == null || trackingNumbers.length == 0) {
+			return ImmutableList.of();
+		}
 
 		final Collection<String> numbers = Arrays.asList(restTemplate.postForObject(getUrl(EndpointNames.REMOVE_TRACKING_USER_ENDPOINT), trackingNumbers, String[].class, ImmutableMap.of(EndpointNames.USERNAME_PARAM, username)));
 		log.info("Tracking numbers({}) of user({}) were updated.", numbers, username);

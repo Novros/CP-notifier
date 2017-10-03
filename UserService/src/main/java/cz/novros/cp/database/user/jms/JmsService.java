@@ -1,5 +1,6 @@
 package cz.novros.cp.database.user.jms;
 
+import java.util.Collection;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -41,7 +42,7 @@ public class JmsService extends AbstractJmsService implements UserJmsService, Se
 
 	@Autowired
 	protected JmsService(@Nonnull final JmsTemplate jmsTemplate, final UserService userService, final UserSecurityService userSecurityService) {
-		super(jmsTemplate);
+		super(jmsTemplate, QueueNames.DATABASE_USER_QUEUE);
 
 		this.userService = userService;
 		this.userSecurityService = userSecurityService;
@@ -101,8 +102,10 @@ public class JmsService extends AbstractJmsService implements UserJmsService, Se
 		final String username = message.getUsername();
 		log.debug("Adding tracking numbers to user({}).", username);
 
+		final Collection<String> updatedTrackingNumbers = userService.addTrackingNumbers(username, message.getTrackingNumbers());
+
 		final TrackingNumbersMessage trackingNumbersMessage = new TrackingNumbersMessage();
-		trackingNumbersMessage.setTrackingNumbers(userService.addTrackingNumbers(username, message.getTrackingNumbers()));
+		trackingNumbersMessage.setTrackingNumbers(updatedTrackingNumbers.toArray(new String[updatedTrackingNumbers.size()]));
 
 		log.info("Tracking numbers of user({}) where updated(operation add)!", username);
 
@@ -114,8 +117,10 @@ public class JmsService extends AbstractJmsService implements UserJmsService, Se
 		final String username = message.getUsername();
 		log.debug("Removing tracking numbers to user({}).", username);
 
+		final Collection<String> updatedTrackingNumbers = userService.removeTrackingNumbers(username, message.getTrackingNumbers());
+
 		final TrackingNumbersMessage trackingNumbersMessage = new TrackingNumbersMessage();
-		trackingNumbersMessage.setTrackingNumbers(userService.removeTrackingNumbers(username, message.getTrackingNumbers()));
+		trackingNumbersMessage.setTrackingNumbers(updatedTrackingNumbers.toArray(new String[updatedTrackingNumbers.size()]));
 
 		log.info("Tracking numbers of user({}) where updated(operation remove)!", username);
 
@@ -129,7 +134,7 @@ public class JmsService extends AbstractJmsService implements UserJmsService, Se
 
 		final Set<String> numbers = userService.readTrackingNumbers(username);
 		final TrackingNumbersMessage trackingNumbersMessage = new TrackingNumbersMessage();
-		trackingNumbersMessage.setTrackingNumbers(numbers);
+		trackingNumbersMessage.setTrackingNumbers(numbers.toArray(new String[numbers.size()]));
 
 		log.info("Tracking numbers (count={}) for user({}) where read!", numbers.size(), username);
 

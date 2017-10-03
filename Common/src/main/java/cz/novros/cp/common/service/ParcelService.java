@@ -19,7 +19,7 @@ public interface ParcelService {
 	 * @return Parcels with given tracking numbers.
 	 */
 	@Nonnull
-	Collection<Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers);
+	Collection<Parcel> readParcels(@Nonnull final String[] trackingNumbers);
 
 	/**
 	 * Save parcels into database.
@@ -36,5 +36,5 @@ public interface ParcelService {
 	 *
 	 * @param trackingNumbers Parcels which will be deleted.
 	 */
-	void removeParcels(@Nonnull final Collection<String> trackingNumbers);
+	void removeParcels(@Nonnull final String[] trackingNumbers);
 }

@@ -1,5 +1,6 @@
 package cz.novros.cp.database.user.service;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 
@@ -26,14 +27,14 @@ public class UserService implements cz.novros.cp.common.service.UserService {
 
 	@Nonnull
 	@Override
-	public Collection<String> addTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
+	public Collection<String> addTrackingNumbers(@Nonnull final String username, @Nonnull final String[] trackingNumbers) {
 		User user = userRepository.findOne(username);
 
 		if (user == null) {
 			return ImmutableSet.of();
 		}
 
-		user.getTrackingNumbers().addAll(trackingNumbers);
+		user.getTrackingNumbers().addAll(Arrays.asList(trackingNumbers));
 		user = userRepository.save(user);
 
 		return user.getTrackingNumbers();
@@ -41,14 +42,14 @@ public class UserService implements cz.novros.cp.common.service.UserService {
 
 	@Nonnull
 	@Override
-	public Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers) {
+	public Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nonnull final String[] trackingNumbers) {
 		User user = userRepository.findOne(username);
 
 		if (user == null) {
 			return ImmutableSet.of();
 		}
 
-		user.getTrackingNumbers().removeAll(trackingNumbers);
+		user.getTrackingNumbers().removeAll(Arrays.asList(trackingNumbers));
 		user = userRepository.save(user);
 
 		return user.getTrackingNumbers();

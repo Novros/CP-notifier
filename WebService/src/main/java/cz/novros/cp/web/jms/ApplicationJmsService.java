@@ -1,5 +1,6 @@
 package cz.novros.cp.web.jms;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -28,15 +29,15 @@ public class ApplicationJmsService extends AbstractJmsService implements Applica
 	}
 
 	@Override
-	public Collection<Parcel> refreshParcels(@Nonnull final Collection<String> trackingNumbers) {
-		log.debug("Refreshing parcels for tracking numbers({}).", trackingNumbers);
+	public Collection<Parcel> refreshParcels(@Nonnull final String[] trackingNumbers) {
+		log.debug("Refreshing parcels for tracking numbers({}).", Arrays.toString(trackingNumbers));
 
 		final RefreshParcelsMessage readParcelsMessage = new RefreshParcelsMessage();
-		fillBasicInfo(readParcelsMessage, "tracking");
+		fillBasicInfo(readParcelsMessage);
 		readParcelsMessage.setTrackingNumbers(trackingNumbers);
 
 		jmsTemplate.convertAndSend(QueueNames.APPLICATION_QUEUE, readParcelsMessage);
-		final ParcelsMessage parcelsMessage = (ParcelsMessage) jmsTemplate.receiveSelectedAndConvert(readParcelsMessage.getSenderQueue(), readParcelsMessage.getMessageId());
+		final ParcelsMessage parcelsMessage = recieveResponse(readParcelsMessage);
 
 		log.info("Parcels(size={}) for tracking numbers({}) were refreshed.", parcelsMessage.getParcels().size(), trackingNumbers);
 

@@ -1,4 +1,4 @@
-group 'cz.novros.cp.app'
+group 'cz.novros.cp'
 version '1.0.0'
 
 apply plugin: 'java'

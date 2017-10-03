@@ -18,6 +18,6 @@ public interface ApplicationService {
 	 *
 	 * @return Refreshed parcels.
 	 */
-	Collection<Parcel> refreshParcels(@Nonnull final Collection<String> trackingNumbers);
+	Collection<Parcel> refreshParcels(@Nonnull final String[] trackingNumbers);
 
 }

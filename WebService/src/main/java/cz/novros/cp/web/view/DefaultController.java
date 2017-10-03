@@ -1,6 +1,5 @@
 package cz.novros.cp.web.view;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -55,8 +54,9 @@ public class DefaultController {
 
 	@PostMapping("/add-tracking")
 	public String addTrackingNumbers(@ModelAttribute @Nullable final TrackingNumbersForm trackingNumbers, @Nonnull final Model model) {
-		if (trackingNumbers != null && !trackingNumbers.getTrackingNumbersCollection().isEmpty()) {
-			return displayTrackingNumbers(model, userService.addTrackingNumbers(getLoggedUsername(), trackingNumbers.getTrackingNumbersCollection()));
+		if (trackingNumbers != null && trackingNumbers.getTrackingNumbersArray().length != 0) {
+			applicationService.refreshParcels(trackingNumbers.getTrackingNumbersArray());
+			return displayTrackingNumbers(model, userService.addTrackingNumbers(getLoggedUsername(), trackingNumbers.getTrackingNumbersArray()));
 		} else {
 			return trackingNumbers(model);
 		}
@@ -65,7 +65,9 @@ public class DefaultController {
 	@GetMapping("/remove-tracking") // FIXME - Maybe POST?
 	public String removeTrackingNumbers(@RequestParam @Nullable final String trackingNumbers, @Nonnull final Model model) {
 		if (trackingNumbers != null && !trackingNumbers.isEmpty()) {
-			return displayTrackingNumbers(model, userService.removeTrackingNumbers(getLoggedUsername(), Arrays.asList(trackingNumbers.split(CommonConstants.TRACKING_NUMBER_DELIMITER))));
+			final String[] numbers = trackingNumbers.split(CommonConstants.TRACKING_NUMBER_DELIMITER);
+			parcelService.removeParcels(numbers);
+			return displayTrackingNumbers(model, userService.removeTrackingNumbers(getLoggedUsername(), numbers));
 		} else {
 			return trackingNumbers(model);
 		}
@@ -94,8 +96,9 @@ public class DefaultController {
 		return "tracking_numbers";
 	}
 
-	private Collection<String> getTrackingNumbersOfCurrentUser() {
-		return userService.readTrackingNumbers(getLoggedUsername());
+	private String[] getTrackingNumbersOfCurrentUser() {
+		final Collection<String> numbers = userService.readTrackingNumbers(getLoggedUsername());
+		return numbers.toArray(new String[numbers.size()]);
 	}
 
 	private Collection<Parcel> getParcelsOfCurrentUser() {

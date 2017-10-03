@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -25,22 +26,22 @@ import cz.novros.cp.rest.service.AbstractRestClient;
 @Profile("rest")
 @Primary
 @Slf4j
-public class ApplicationRestService extends AbstractRestClient implements ApplicationService {
+public class ApplicationRestClient extends AbstractRestClient implements ApplicationService {
 
 	@Autowired
-	public ApplicationRestService(@Nonnull final RestTemplate restTemplate, @Value("${cp.application.url}") final String serverUrl) {
+	public ApplicationRestClient(@Nonnull final RestTemplate restTemplate, @Value("${cp.application.url}") final String serverUrl) {
 		super(restTemplate, serverUrl, EndpointNames.APPLICATION_SERVICE_ENDPOINT);
 	}
 
 	@Override
-	public Collection<Parcel> refreshParcels(@Nonnull final Collection<String> trackingNumbers) {
-		log.debug("Refreshing parcels with tracking numbers({}).", trackingNumbers);
+	public Collection<Parcel> refreshParcels(@Nullable final String[] trackingNumbers) {
+		log.debug("Refreshing parcels with tracking numbers({}).", Arrays.toString(trackingNumbers));
 
-		if (trackingNumbers.isEmpty()) {
+		if (trackingNumbers == null || trackingNumbers.length == 0) {
 			return ImmutableList.of();
 		}
 
-		final Parcel[] parcels = restTemplate.postForObject(getUrl(EndpointNames.REFERSH_PARCEL_ENDPOINT), trackingNumbers, Parcel[].class);
+		final Parcel[] parcels = restTemplate.postForObject(getUrl(EndpointNames.REFRESH_PARCEL_ENDPOINT), trackingNumbers, Parcel[].class);
 		log.info("Parcels({}) with tracking numbers({}) where refreshed.", parcels.length, trackingNumbers);
 
 		return Arrays.asList(parcels);

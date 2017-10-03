@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import cz.novros.cp.common.entity.User;
 import cz.novros.cp.common.service.SecurityUserService;
-import cz.novros.cp.jms.JmsConstants;
 import cz.novros.cp.jms.QueueNames;
 import cz.novros.cp.jms.message.reponse.BooleanResponseMessage;
 import cz.novros.cp.jms.message.user.LoginUserMessage;
@@ -36,7 +35,7 @@ public class SecurityUserJmsService extends AbstractJmsService implements Securi
 		message.setPassword(user.getPassword());
 
 		jmsTemplate.convertAndSend(QueueNames.DATABASE_USER_QUEUE, message);
-		final BooleanResponseMessage booleanResponseMessage = (BooleanResponseMessage) jmsTemplate.receiveSelectedAndConvert(message.getSenderQueue(), JmsConstants.getResponseSelector(message.getMessageId()));
+		final BooleanResponseMessage booleanResponseMessage = recieveResponse(message);
 
 		log.debug("User({}) was " + (booleanResponseMessage.isOk() ? "not " : "") + "registered.");
 
@@ -52,7 +51,7 @@ public class SecurityUserJmsService extends AbstractJmsService implements Securi
 		message.setPassword(user.getPassword());
 
 		jmsTemplate.convertAndSend(QueueNames.DATABASE_USER_QUEUE, message);
-		final BooleanResponseMessage booleanResponseMessage = (BooleanResponseMessage) jmsTemplate.receiveSelectedAndConvert(message.getSenderQueue(), JmsConstants.getResponseSelector(message.getMessageId()));
+		final BooleanResponseMessage booleanResponseMessage = recieveResponse(message);
 
 		log.debug("User({}) was " + (booleanResponseMessage.isOk() ? "not " : "") + "logged.");
 

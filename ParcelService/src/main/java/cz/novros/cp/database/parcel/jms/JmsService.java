@@ -3,6 +3,7 @@ package cz.novros.cp.database.parcel.jms;
 import static cz.novros.cp.jms.QueueNames.DATABASE_PARCEL_QUEUE;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -21,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import cz.novros.cp.common.entity.Parcel;
 import cz.novros.cp.database.parcel.service.ParcelService;
+import cz.novros.cp.jms.QueueNames;
 import cz.novros.cp.jms.message.AbstractJmsMessage;
 import cz.novros.cp.jms.message.parcel.ParcelsMessage;
 import cz.novros.cp.jms.message.parcel.ReadAllTrackingNumbersMessage;
@@ -41,7 +43,7 @@ public class JmsService extends AbstractJmsService implements ParcelJmsService {
 
 	@Autowired
 	public JmsService(@Nonnull final ParcelService parcelService, final JmsTemplate jmsTemplate) {
-		super(jmsTemplate);
+		super(jmsTemplate, QueueNames.DATABASE_PARCEL_QUEUE);
 		this.parcelService = parcelService;
 	}
 
@@ -98,7 +100,7 @@ public class JmsService extends AbstractJmsService implements ParcelJmsService {
 
 	@Override
 	public void removeParcels(@Nonnull final RemoveParcelsMessage message) {
-		log.debug("Remove parcels({}) from database.", message.getTrackingNumbers());
+		log.debug("Remove parcels({}) from database.", Arrays.toString(message.getTrackingNumbers()));
 
 		parcelService.removeParcels(message.getTrackingNumbers());
 		// FIXME
@@ -125,10 +127,10 @@ public class JmsService extends AbstractJmsService implements ParcelJmsService {
 		if (trackingNumbers.isEmpty()) {
 			log.warn("Database is empty!");
 			parcelsMessage.setError(true);
-			parcelsMessage.setTrackingNumbers(ImmutableList.of());
+			parcelsMessage.setTrackingNumbers(new String[]{});
 		} else {
 			log.debug("All tracking numbers were successfully read.");
-			parcelsMessage.setTrackingNumbers(trackingNumbers);
+			parcelsMessage.setTrackingNumbers(trackingNumbers.toArray(new String[trackingNumbers.size()]));
 		}
 
 		sendResponse(message, parcelsMessage);

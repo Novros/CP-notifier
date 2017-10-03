@@ -1,5 +1,6 @@
 package cz.novros.cp.rest.client.rest;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -35,12 +36,12 @@ public class CzechPostRestService extends AbstractRestService implements CzechPo
 
 	@RequestMapping(EndpointNames.READ_PARCELS_ENDPOINT)
 	@Override
-	public Collection<Parcel> readParcels(@RequestParam("numbers") @Nonnull final Collection<String> numbers) {
-		log.info("Reading parcels with tracking numbers({}) from czech post rest api.", numbers);
+	public Collection<Parcel> readParcels(@RequestParam("numbers") @Nonnull final String[] numbers) {
+		log.info("Reading parcels with tracking numbers({}) from czech post rest api.", Arrays.toString(numbers));
 
 		final Collection<Parcel> parcels = czechPostRestClientService.readParcels(numbers);
 
-		log.info("Parcels(count={}) with tracking numbers({}) were read from czech post rest api.", parcels.size(), numbers);
+		log.info("Parcels(count={}) with tracking numbers({}) were read from czech post rest api.", parcels.size(), Arrays.toString(numbers));
 
 		return parcels;
 	}

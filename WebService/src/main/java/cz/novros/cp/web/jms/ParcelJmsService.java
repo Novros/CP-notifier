@@ -1,5 +1,6 @@
 package cz.novros.cp.web.jms;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -31,15 +32,15 @@ public class ParcelJmsService extends AbstractJmsService implements ParcelServic
 
 	@Nonnull
 	@Override
-	public Collection<Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers) {
-		log.debug("Reading parcels for tracking numbers({}).", trackingNumbers);
+	public Collection<Parcel> readParcels(@Nonnull final String[] trackingNumbers) {
+		log.debug("Reading parcels for tracking numbers({}).", Arrays.toString(trackingNumbers));
 
 		final ReadParcelsMessage readParcelsMessage = new ReadParcelsMessage();
-		fillBasicInfo(readParcelsMessage, "tracking");
+		fillBasicInfo(readParcelsMessage);
 		readParcelsMessage.setTrackingNumbers(trackingNumbers);
 
 		jmsTemplate.convertAndSend(QueueNames.DATABASE_PARCEL_QUEUE, readParcelsMessage);
-		final ParcelsMessage parcelsMessage = (ParcelsMessage) jmsTemplate.receiveSelectedAndConvert(readParcelsMessage.getSenderQueue(), readParcelsMessage.getMessageId());
+		final ParcelsMessage parcelsMessage = recieveResponse(readParcelsMessage);
 
 		log.debug("Parcels(size={}) for tracking numbers({}) were read.", parcelsMessage.getParcels().size(), trackingNumbers);
 
@@ -52,11 +53,11 @@ public class ParcelJmsService extends AbstractJmsService implements ParcelServic
 		log.debug("Saving parcels(count={}) to database.", parcels.size());
 
 		final SaveParcelsMessage saveParcelsMessage = new SaveParcelsMessage();
-		fillBasicInfo(saveParcelsMessage, "parcels");
+		fillBasicInfo(saveParcelsMessage);
 		saveParcelsMessage.setParcels(parcels);
 
 		jmsTemplate.convertAndSend(QueueNames.DATABASE_PARCEL_QUEUE, saveParcelsMessage);
-		final ParcelsMessage parcelsMessage = (ParcelsMessage) jmsTemplate.receiveSelectedAndConvert(saveParcelsMessage.getSenderQueue(), saveParcelsMessage.getMessageId());
+		final ParcelsMessage parcelsMessage = recieveResponse(saveParcelsMessage);
 
 		log.debug("Parcels(size={}) were saved.", parcelsMessage.getParcels().size());
 
@@ -64,15 +65,15 @@ public class ParcelJmsService extends AbstractJmsService implements ParcelServic
 	}
 
 	@Override
-	public void removeParcels(@Nonnull final Collection<String> trackingNumbers) {
-		log.debug("Removing parcels by tracking numbers({}).", trackingNumbers);
+	public void removeParcels(@Nonnull final String[] trackingNumbers) {
+		log.debug("Removing parcels by tracking numbers({}).", Arrays.toString(trackingNumbers));
 
 		final RemoveParcelsMessage removeParcelsMessage = new RemoveParcelsMessage();
-		fillBasicInfo(removeParcelsMessage, "tracking");
+		fillBasicInfo(removeParcelsMessage);
 		removeParcelsMessage.setTrackingNumbers(trackingNumbers);
 
 		jmsTemplate.convertAndSend(QueueNames.DATABASE_PARCEL_QUEUE, removeParcelsMessage);
 
-		log.debug("Parcels for tracking numbers({}) should be removed.", trackingNumbers);
+		log.debug("Parcels for tracking numbers({}) should be removed.", Arrays.toString(trackingNumbers));
 	}
 }

@@ -18,7 +18,7 @@ public interface UserService {
 	 * @return Return actualized tracking numbers of user.
 	 */
 	@Nonnull
-	Collection<String> addTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers);
+	Collection<String> addTrackingNumbers(@Nonnull final String username, @Nonnull final String[] trackingNumbers);
 
 	/**
 	 * Remove tracking numbers from user.
@@ -29,7 +29,7 @@ public interface UserService {
 	 * @return Return actualized tracking numbers of user.
 	 */
 	@Nonnull
-	Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nonnull final Collection<String> trackingNumbers);
+	Collection<String> removeTrackingNumbers(@Nonnull final String username, @Nonnull final String[] trackingNumbers);
 
 	/**
 	 * Read all tracking number of user.

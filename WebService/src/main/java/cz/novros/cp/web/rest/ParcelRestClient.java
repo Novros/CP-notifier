@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -26,19 +27,19 @@ import cz.novros.cp.rest.service.AbstractRestClient;
 @Profile("rest")
 @Primary
 @Slf4j
-public class ParcelRestService extends AbstractRestClient implements ParcelService {
+public class ParcelRestClient extends AbstractRestClient implements ParcelService {
 
 	@Autowired
-	public ParcelRestService(final RestTemplate restTemplate, @Value("${cp.database.parcel.url}") final String serverUrl) {
+	public ParcelRestClient(final RestTemplate restTemplate, @Value("${cp.database.parcel.url}") final String serverUrl) {
 		super(restTemplate, serverUrl, EndpointNames.PARCEL_SERVICE_ENDPOINT);
 	}
 
 	@Nonnull
 	@Override
-	public Collection<Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers) {
-		log.debug("Reading parcels with tracking numbers({}).", trackingNumbers);
+	public Collection<Parcel> readParcels(@Nullable final String[] trackingNumbers) {
+		log.debug("Reading parcels with tracking numbers({}).", Arrays.toString(trackingNumbers));
 
-		if (trackingNumbers.isEmpty()) {
+		if (trackingNumbers == null || trackingNumbers.length == 0) {
 			return ImmutableList.of();
 		}
 
@@ -64,12 +65,14 @@ public class ParcelRestService extends AbstractRestClient implements ParcelServi
 	}
 
 	@Override
-	public void removeParcels(@Nonnull final Collection<String> trackingNumbers) {
-		log.debug("Removing parcels with tracking numbers({}) from database.", trackingNumbers);
+	public void removeParcels(@Nullable final String[] trackingNumbers) {
+		log.debug("Removing parcels with tracking numbers({}) from database.", Arrays.toString(trackingNumbers));
 
-		if (!trackingNumbers.isEmpty()) {
-			restTemplate.delete(getUrl(EndpointNames.REMOVE_PARCELS_ENDPOINT), trackingNumbers);
-			log.info("Parcels with tracking numbers({}) were removed.", trackingNumbers);
+		if (trackingNumbers == null || trackingNumbers.length == 0) {
+			return;
 		}
+
+		restTemplate.delete(getUrl(EndpointNames.REMOVE_PARCELS_ENDPOINT), Arrays.toString(trackingNumbers));
+		log.info("Parcels with tracking numbers({}) were removed.", Arrays.toString(trackingNumbers));
 	}
 }

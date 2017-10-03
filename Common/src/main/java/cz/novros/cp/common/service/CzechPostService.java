@@ -18,5 +18,5 @@ public interface CzechPostService {
 	 *
 	 * @return Collection of read parcels, it might not have some parcels, because they not exists.
 	 */
-	Collection<Parcel> readParcels(@Nonnull final Collection<String> trackingNumbers);
+	Collection<Parcel> readParcels(@Nonnull final String[] trackingNumbers);
 }

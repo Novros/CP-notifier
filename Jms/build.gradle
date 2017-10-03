@@ -1,5 +1,5 @@
-group 'cz.novros.cp.jms'
-version '1.0-SNAPSHOT'
+group 'cz.novros.cp'
+version '1.0.0'
 
 apply plugin: 'java'
 apply plugin: 'idea'

@@ -20,10 +20,10 @@ import cz.novros.cp.rest.service.AbstractRestClient;
 @Profile("rest")
 @Primary
 @Slf4j
-public class SecurityRestService extends AbstractRestClient implements SecurityUserService {
+public class SecurityRestClient extends AbstractRestClient implements SecurityUserService {
 
 	@Autowired
-	public SecurityRestService(final RestTemplate restTemplate, @Value("${cp.database.user.url}") final String serverUrl) {
+	public SecurityRestClient(final RestTemplate restTemplate, @Value("${cp.database.user.url}") final String serverUrl) {
 		super(restTemplate, serverUrl, EndpointNames.SECURITY_SERVICE_ENDPOINT);
 	}
 

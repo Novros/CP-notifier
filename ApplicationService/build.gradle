@@ -1,4 +1,4 @@
-group 'cz.novros.cp.rest'
+group 'cz.novros.cp.app'
 version '1.0.0'
 
 apply plugin: 'java'
@@ -24,7 +24,7 @@ repositories {
 }
 
 jar {
-    baseName = 'cp-cp_service'
+    baseName = 'cp-app_service'
     version = '1.0.0'
 }
 
@@ -41,13 +41,11 @@ task buildDocker(type: Docker, dependsOn: build) {
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework:spring-web")
-    compile('org.apache.httpcomponents:httpclient')
+    compile("com.fasterxml.jackson.core:jackson-databind")
 
     // MQ
     compile("org.springframework.boot:spring-boot-starter-activemq")
     compile("org.apache.activemq:activemq-broker")
-    compile("com.fasterxml.jackson.core:jackson-databind")
 
     // Good libs
     compile group: 'com.google.guava', name: 'guava', version: '23.0'
